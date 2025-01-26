@@ -1,0 +1,174 @@
+:root {
+    --primary-bg: #ffffff;
+    --primary-text: #2d3748;
+    --secondary-bg: #f7fafc;
+    --accent-color: #4299e1;
+    --border-color: #e2e8f0;
+    --card-bg: #ffffff;
+    --semester1-bg: #fff5f5;
+    --semester2-bg: #f0fff4;
+  }
+  
+  [data-theme="dark"] {
+    --primary-bg: #1a202c;
+    --primary-text: #e2e8f0;
+    --secondary-bg: #2d3748;
+    --accent-color: #63b3ed;
+    --border-color: #4a5568;
+    --card-bg: #2d3748;
+    --semester1-bg: #2d2525;
+    --semester2-bg: #1a2d1a;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    transition: background-color 0.3s, color 0.3s;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  h1, h2, h3 {
+    color: var(--primary-text);
+    margin: 1em 0 0.5em;
+  }
+  
+  h1 {
+    color: var(--accent-color);
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 0.5em;
+  }
+  
+  .input-group {
+    margin: 15px 0;
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  select {
+    padding: 8px 12px;
+    background-color: var(--secondary-bg);
+    color: var(--primary-text);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin: 5px 0;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 1px var(--accent-color);
+  }
+  
+  button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+  }
+  
+  button:hover {
+    filter: brightness(0.9);
+  }
+  
+  .class-management,
+  .quarter-section,
+  .semester-section,
+  .final-grade {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .semester-section {
+    background-color: var(--semester1-bg);
+  }
+  
+  .final-grade {
+    background-color: var(--semester2-bg);
+  }
+  
+  .grade-input-group {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  
+  .grade-list {
+    margin: 10px 0;
+  }
+  
+  .grade-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: var(--secondary-bg);
+    margin: 5px 0;
+    border-radius: 4px;
+  }
+  
+  .remove-btn {
+    color: #e53e3e;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0 8px;
+    font-weight: bold;
+    transition: color 0.2s;
+  }
+  
+  .remove-btn:hover {
+    color: #c53030;
+  }
+  
+  .grade-display {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--accent-color);
+    margin: 10px 0;
+  }
+  
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+  
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+    
+    .grade-input-group {
+      flex-direction: column;
+    }
+    
+    button {
+      width: 100%;
+    }
+  }
