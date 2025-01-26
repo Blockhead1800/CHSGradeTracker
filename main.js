@@ -129,6 +129,39 @@ class Class {
     }
 }
 
+function removeCurrentClass() {
+  const className = getSelectedClass();
+  if (!className || !confirm(`Are you sure you want to remove ${className}?`)) return;
+
+  // Remove from classes array
+  classes = classes.filter(c => c !== className);
+  
+  // Remove from classObjects
+  delete classObjects[className];
+  
+  // Update dropdown
+  updateClassDropdown();
+  
+  // Clear current view if no classes left
+  if (classes.length > 0) {
+    viewClass(classes[0]);
+  } else {
+    // Clear all displayed data
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById(`q${i}f`).textContent = '-';
+      document.getElementById(`q${i}pa`).innerHTML = '';
+      document.getElementById(`q${i}sa`).innerHTML = '';
+    }
+    document.getElementById("m").textContent = '-';
+    document.getElementById("finals").textContent = '-';
+    document.getElementById("s1f").textContent = '-';
+    document.getElementById("s2f").textContent = '-';
+    document.getElementById("final").textContent = '-';
+  }
+  
+  saveAllData();
+}
+
 let classes = [];
 const classObjects = {};
 
@@ -161,16 +194,23 @@ function loadAllData() {
 }
 
 function updateClassDropdown() {
-    const classList = document.getElementById('classList');
-    classList.innerHTML = '';
-    classes.forEach(className => {
-        const option = document.createElement('option');
-        option.value = className;
-        option.textContent = className;
-        classList.appendChild(option);
-    });
+  const classList = document.getElementById('classList');
+  const previousSelection = classList.value;
+  
+  classList.innerHTML = '';
+  classes.forEach(className => {
+    const option = document.createElement('option');
+    option.value = className;
+    option.textContent = className;
+    option.selected = (className === previousSelection);
+    classList.appendChild(option);
+  });
+  
+  // If previous selection was removed, select first item
+  if (!classes.includes(previousSelection) && classes.length > 0) {
+    classList.value = classes[0];
+  }
 }
-
 // UI Functions
 function addClass(name) {
     if (!name) return;
