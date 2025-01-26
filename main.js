@@ -176,7 +176,7 @@ function saveAllData() {
         savedData.classObjects[className] = { ...classObjects[className] };
     }
 
-    setCookie('gradeTrackerData', savedData, 30);
+    setCookie('gradeTrackerData', savedData, 90);
 }
 
 function loadAllData() {
