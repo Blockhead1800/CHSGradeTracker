@@ -51,7 +51,7 @@
 input[type="number"],
 select {
     width: 100%;
-    max-width: 350px;
+    max-width: 150px;
     padding: 8px 12px;
     background-color: var(--secondary-bg);
     color: var(--primary-text);
