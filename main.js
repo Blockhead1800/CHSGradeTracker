@@ -73,7 +73,7 @@ class Class {
     }
 
     addGrade(quarter, type, grade) {
-        if (grade < 1 || grade > 12) return;
+        if (grade < 0 || grade > 12) return;
         this[`q${quarter}${type}`].push(grade);
         this.calculateQuarterGrade(quarter);
         this.calculateSemesters();
