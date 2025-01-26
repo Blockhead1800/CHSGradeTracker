@@ -174,4 +174,12 @@ select {
     button {
       width: 100%;
     }
+
+    button.danger {
+  background-color: #e53e3e;
+}
+
+button.danger:hover {
+  background-color: #c53030;
+}
   }
