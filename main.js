@@ -217,6 +217,11 @@ function updateClassDropdown() {
 // UI Functions
 function addClass(name) {
     if (!name) return;
+    if (classes.includes(name)) {
+    alert("Class already exists!");
+    return;
+    }
+    document.getElementById("classInput").value = ""; 
     classes.push(name);
     const newOption = document.createElement("option");
     newOption.value = name;
