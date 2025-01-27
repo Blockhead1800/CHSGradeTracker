@@ -103,7 +103,7 @@ class Class {
     }
 
     setFinalTest(grade) {
-        if (grade < 1 || grade > 12) return;
+        if (grade < 0 || grade > 12) return;
         this.finals = grade;
         this.calculateSemesters();
     }
