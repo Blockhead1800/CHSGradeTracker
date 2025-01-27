@@ -73,7 +73,9 @@ class Class {
     }
 
     addGrade(quarter, type, grade) {
-        if (grade < 0 || grade > 12) return;
+        var g = grade;
+        if(isNaN(g)) {g = convertToNum(g)}
+        if (g < 0 || g > 12) return;
         this[`q${quarter}${type}`].push(grade);
         this.calculateQuarterGrade(quarter);
         this.calculateSemesters();
@@ -94,6 +96,7 @@ class Class {
     }
 
     setMidterm(grade) {
+
         if (grade < 1 || grade > 12) return;
         this.midterm = grade;
         this.calculateSemesters();
@@ -231,15 +234,33 @@ function viewClass(name) {
     for (let i = 1; i <= 4; i++) {
         updateGradeList(`q${i}pa`, cls[`q${i}pa`], i, 'pa');
         updateGradeList(`q${i}sa`, cls[`q${i}sa`], i, 'sa');
-        document.getElementById(`q${i}f`).textContent = cls[`q${i}f`] || '-';
+        const qGrade = cls[`q${i}f`];
+        const qGradeNumber = parseFloat(qGrade);
+        const qDisplay = qGrade ? `${qGrade} (${convertToLetter(qGradeNumber)})` : '-';
+        document.getElementById(`q${i}f`).textContent = qDisplay;
     }
 
-    document.getElementById("m").textContent = cls.midterm || '-';
-    document.getElementById("finals").textContent = cls.finals || '-';
-    document.getElementById("s1f").textContent = cls.s1f || '-';
-    document.getElementById("s2f").textContent = cls.s2f || '-';
-    document.getElementById("final").textContent = cls.final || '-';
+    const midtermGrade = cls.midterm;
+    const midtermDisplay = midtermGrade !== null ? `${midtermGrade} (${convertToLetter(midtermGrade)})` : '-';
+    document.getElementById("m").textContent = midtermDisplay;
+
+    const finalsGrade = cls.finals;
+    const finalsDisplay = finalsGrade !== null ? `${finalsGrade} (${convertToLetter(finalsGrade)})` : '-';
+    document.getElementById("finals").textContent = finalsDisplay;
+
+    const s1fGrade = cls.s1f;
+    const s1fDisplay = s1fGrade ? `${s1fGrade} (${convertToLetter(parseFloat(s1fGrade))})` : '-';
+    document.getElementById("s1f").textContent = s1fDisplay;
+
+    const s2fGrade = cls.s2f;
+    const s2fDisplay = s2fGrade ? `${s2fGrade} (${convertToLetter(parseFloat(s2fGrade))})` : '-';
+    document.getElementById("s2f").textContent = s2fDisplay;
+
+    const finalGrade = cls.final;
+    const finalDisplay = finalGrade ? `${finalGrade} (${convertToLetter(parseFloat(finalGrade))})` : '-';
+    document.getElementById("final").textContent = finalDisplay;
 }
+
 
 function updateGradeList(elementId, grades, quarter, type) {
     const container = document.getElementById(elementId);
@@ -247,7 +268,7 @@ function updateGradeList(elementId, grades, quarter, type) {
     grades.forEach((grade, index) => {
         const div = document.createElement('div');
         div.className = 'grade-item';
-        div.innerHTML = `${grade}<span class="remove-btn" onclick="removeGrade(${quarter}, '${type}', ${index})">×</span>`;
+        div.innerHTML = `${grade} (${convertToLetter(grade)})<span class="remove-btn" onclick="removeGrade(${quarter}, '${type}', ${index})">×</span>`;
         container.appendChild(div);
     });
 }
@@ -260,6 +281,7 @@ function getSelectedClass() {
 function addPA(quarter) {
     const className = getSelectedClass();
     const input = document.getElementById(`q${quarter}paInput`);
+    if(isNaN(input.value)) {input.value = convertToNum(input.value)}
     if (!className || !input.value) return;
     classObjects[className].addGrade(quarter, 'pa', Number(input.value));
     input.value = "";
@@ -271,6 +293,7 @@ function addSA(quarter) {
     const className = getSelectedClass();
     const input = document.getElementById(`q${quarter}saInput`);
     if (!className || !input.value) return;
+    if(isNaN(input.value)) {input.value = convertToNum(input.value)}
     classObjects[className].addGrade(quarter, 'sa', Number(input.value));
     input.value = "";
     viewClass(className);
@@ -288,6 +311,7 @@ function setMidtermGrade() {
     const className = getSelectedClass();
     const input = document.getElementById("mInput");
     if (!className || !input.value) return;
+    if(isNaN(input.value)) {input.value = convertToNum(input.value)}
     classObjects[className].setMidterm(Number(input.value));
     input.value = "";
     viewClass(className);
@@ -298,10 +322,57 @@ function setTestGrade() {
     const className = getSelectedClass();
     const input = document.getElementById("fInput");
     if (!className || !input.value) return;
+    if(isNaN(input.value)) {input.value = convertToNum(input.value)}
     classObjects[className].setFinalTest(Number(input.value));
     input.value = "";
     viewClass(className);
     saveAllData();
+}
+
+function convertToNum(letter) {
+    if(letter == "A+" || letter == "a+") return 12;
+    if(letter == "A" || letter == "a") return 11;
+    if(letter == "A-" || letter == "a-") return 10;
+    if(letter == "B+" || letter == "b+") return 9;
+    if(letter == "B" || letter == "b") return 8;
+    if(letter == "B-" || letter == "b-") return 7;
+    if(letter == "C+" || letter == "c+") return 6;
+    if(letter == "C" || letter == "c") return 5;
+    if(letter == "C-" || letter == "c-") return 4;
+    if(letter == "F+" || letter == "f+") return 3;
+    if(letter == "F" || letter == "f") return 2;
+    if(letter == "F-" || letter == "f-") return 1;
+    return 0;
+}
+
+function convertToLetter(num) {
+    if(num > 11.5) {
+        return "A+";
+    } else if(num >= 10.5) {
+        return "A";
+    } else if(num >= 9.5) {
+        return "A-";
+    } else if(num >= 8.5) {
+        return "B+";
+    } else if(num >= 7.5) {
+        return "B";
+    } else if(num >= 6.5) {
+        return "B-";
+    } else if(num >= 5.5) {
+        return "C+";
+    } else if(num >= 4.5) {
+        return "C";
+    } else if(num >= 3.5) {
+        return "C-";
+    } else if(num >= 2.5) {
+        return "F+";
+    } else if(num >= 1.5) {
+        return "F";
+    } else if(num > 0) {
+        return "F-";
+    } else { 
+        return 0;
+    }
 }
 
 // Initialize App
