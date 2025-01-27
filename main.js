@@ -97,7 +97,7 @@ class Class {
 
     setMidterm(grade) {
 
-        if (grade < 1 || grade > 12) return;
+        if (grade < 0 || grade > 12) return;
         this.midterm = grade;
         this.calculateSemesters();
     }
