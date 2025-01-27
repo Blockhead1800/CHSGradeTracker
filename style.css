@@ -48,7 +48,7 @@
   }
 
   input[type="text"],
-input[type="number"],
+input,
 select {
     width: 100%;
     max-width: 150px;
@@ -182,4 +182,6 @@ select {
 button.danger:hover {
   background-color: #c53030;
 }
+
+
   }
