@@ -134,7 +134,7 @@ class Class {
 
 function removeCurrentClass() {
   const className = getSelectedClass();
-  if (!className || !confirm(`Are you sure you want to remove ${className}?`)) return;
+  if (!className || !confirm(`Are you sure you want to delete ${className}?`)) return;
 
   // Remove from classes array
   classes = classes.filter(c => c !== className);
