@@ -373,19 +373,20 @@ function parsePastedGrades() {
     const className = getSelectedClass();
     if (!className || !quarter) return;
 
-    // Use regex to find all grade/weight pairs
-    const gradeRegex = /(0\.45|0\.55)[\s\t]+([A-Fa-f][+-]?)/g;
+    // Improved regex to handle different formats
+    const gradeRegex = /(\b(?:0?\.?45|45\.?0?|55\.?0?|0?\.?55)\b)[\s\t]+([A-Fa-f][+-]?)/gi;
     let matches;
     let addedCount = 0;
 
     while ((matches = gradeRegex.exec(text)) !== null) {
         const [_, weight, grade] = matches;
         const numericGrade = convertToNum(grade.toUpperCase());
-        
-        if (weight === '0.45') {
+        const normalizedWeight = parseFloat(weight) === 55 ? '0.55' : '0.45';
+
+        if (normalizedWeight === '0.45') {
             classObjects[className].addGrade(quarter, 'pa', numericGrade);
             addedCount++;
-        } else if (weight === '0.55') {
+        } else if (normalizedWeight === '0.55') {
             classObjects[className].addGrade(quarter, 'sa', numericGrade);
             addedCount++;
         }
