@@ -346,33 +346,19 @@ function convertToNum(letter) {
 }
 
 function convertToLetter(num) {
-    if(num >= 11.5) {
-        return "A+";
-    } else if(num >= 10.5) {
-        return "A";
-    } else if(num >= 9.5) {
-        return "A-";
-    } else if(num >= 8.5) {
-        return "B+";
-    } else if(num >= 7.5) {
-        return "B";
-    } else if(num >= 6.5) {
-        return "B-";
-    } else if(num >= 5.5) {
-        return "C+";
-    } else if(num >= 4.5) {
-        return "C";
-    } else if(num >= 3.5) {
-        return "C-";
-    } else if(num >= 2.5) {
-        return "F+";
-    } else if(num >= 1.5) {
-        return "F";
-    } else if(num > 0) {
-        return "F-";
-    } else { 
-        return 0;
-    }
+    if(num >= 11.5) return "A+";
+    if(num >= 10.5) return "A";
+    if(num >= 9.5) return "A-";
+    if(num >= 8.5) return "B+";
+    if(num >= 7.5) return "B";
+    if(num >= 6.5) return "B-";
+    if(num >= 5.5) return "C+";
+    if(num >= 4.5) return "C";
+    if(num >= 3.5) return "C-";
+    if(num >= 2.5) return "F+";
+    if(num >= 1.5) return "F";
+    if(num > 0)return "F-";
+    return 0;
 }
 
 // Initialize App
