@@ -373,20 +373,23 @@ function parsePastedGrades() {
     const className = getSelectedClass();
     if (!className || !quarter) return;
 
-    // Improved regex to handle different formats
-    const gradeRegex = /(\b(?:0?\.?45|45\.?0?|55\.?0?|0?\.?55)\b)[\s\t]+([A-Fa-f][+-]?)/gi;
+    // Improved regex with boundary checks
+    const gradeRegex = /(\b0?\.?(45|55)\b|\b(45|55)\.?0?\b)[\s\t]+([A-Fa-f][+-]?)/gi;
     let matches;
     let addedCount = 0;
 
     while ((matches = gradeRegex.exec(text)) !== null) {
-        const [_, weight, grade] = matches;
+        const [fullMatch, weight, , , grade] = matches;
+        const numericWeight = parseFloat(weight.replace(/^0?\.?/, ''));
+        const normalizedWeight = numericWeight === 55 ? '0.55' : '0.45';
         const numericGrade = convertToNum(grade.toUpperCase());
-        const normalizedWeight = parseFloat(weight) === 55 ? '0.55' : '0.45';
+
+        console.log(`Found: ${weight} -> ${normalizedWeight} | ${grade} -> ${numericGrade}`); // Debug log
 
         if (normalizedWeight === '0.45') {
             classObjects[className].addGrade(quarter, 'pa', numericGrade);
             addedCount++;
-        } else if (normalizedWeight === '0.55') {
+        } else {
             classObjects[className].addGrade(quarter, 'sa', numericGrade);
             addedCount++;
         }
@@ -395,13 +398,12 @@ function parsePastedGrades() {
     if (addedCount > 0) {
         viewClass(className);
         saveAllData();
-        alert(`Successfully added ${addedCount} grades!`);
+        alert(`Added ${addedCount} grades`);
         document.getElementById('pasteArea').value = '';
     } else {
-        alert('No valid grades found in pasted text!');
+        alert('No valid grades found! Check format: "[45/55] [GRADE]"');
     }
 }
-
 function scrollToDemo() {
   const demoSection = document.getElementById('demoVideo');
   demoSection.scrollIntoView({ behavior: 'smooth' });
