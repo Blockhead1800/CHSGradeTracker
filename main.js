@@ -224,6 +224,7 @@ function addClass(name) {
     document.getElementById("classList").appendChild(newOption);
     classObjects[name] = new Class(name);
     viewClass(name);
+    document.getElementById("classList").value = name;
     saveAllData();
 }
 
