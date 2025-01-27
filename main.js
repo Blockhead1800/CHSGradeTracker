@@ -96,13 +96,14 @@ class Class {
     }
 
     setMidterm(grade) {
-        if (grade < 0 || grade > 12) return;
+
+        if (grade < 1 || grade > 12) return;
         this.midterm = grade;
         this.calculateSemesters();
     }
 
     setFinalTest(grade) {
-        if (grade < 0 || grade > 12) return;
+        if (grade < 1 || grade > 12) return;
         this.finals = grade;
         this.calculateSemesters();
     }
@@ -364,6 +365,40 @@ function convertToLetter(num) {
     if(num >= 1.5) return "F";
     if(num > 0)return "F-";
     return 0;
+}
+
+function parsePastedGrades() {
+    const text = document.getElementById('pasteArea').value;
+    const quarter = parseInt(document.getElementById('pasteQuarter').value);
+    const className = getSelectedClass();
+    if (!className || !quarter) return;
+
+    // Use regex to find all grade/weight pairs
+    const gradeRegex = /(0\.45|0\.55)[\s\t]+([A-Fa-f][+-]?)/g;
+    let matches;
+    let addedCount = 0;
+
+    while ((matches = gradeRegex.exec(text)) !== null) {
+        const [_, weight, grade] = matches;
+        const numericGrade = convertToNum(grade.toUpperCase());
+        
+        if (weight === '0.45') {
+            classObjects[className].addGrade(quarter, 'pa', numericGrade);
+            addedCount++;
+        } else if (weight === '0.55') {
+            classObjects[className].addGrade(quarter, 'sa', numericGrade);
+            addedCount++;
+        }
+    }
+
+    if (addedCount > 0) {
+        viewClass(className);
+        saveAllData();
+        alert(`Successfully added ${addedCount} grades!`);
+        document.getElementById('pasteArea').value = '';
+    } else {
+        alert('No valid grades found in pasted text!');
+    }
 }
 
 // Initialize App
