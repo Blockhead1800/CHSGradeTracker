@@ -384,8 +384,6 @@ function parsePastedGrades() {
         const normalizedWeight = numericWeight === 55 ? '0.55' : '0.45';
         const numericGrade = convertToNum(grade.toUpperCase());
 
-        console.log(`Found: ${weight} -> ${normalizedWeight} | ${grade} -> ${numericGrade}`); // Debug log
-
         if (normalizedWeight === '0.45') {
             classObjects[className].addGrade(quarter, 'pa', numericGrade);
             addedCount++;
