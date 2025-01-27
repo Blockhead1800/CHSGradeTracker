@@ -401,6 +401,11 @@ function parsePastedGrades() {
     }
 }
 
+function scrollToDemo() {
+  const demoSection = document.getElementById('demoVideo');
+  demoSection.scrollIntoView({ behavior: 'smooth' });
+}
+
 // Initialize App
 initializeTheme();
 loadAllData();
