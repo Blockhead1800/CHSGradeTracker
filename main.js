@@ -346,7 +346,7 @@ function convertToNum(letter) {
 }
 
 function convertToLetter(num) {
-    if(num > 11.5) {
+    if(num >= 11.5) {
         return "A+";
     } else if(num >= 10.5) {
         return "A";
