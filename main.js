@@ -369,26 +369,22 @@ function convertToLetter(num) {
 
 function parsePastedGrades() {
     const text = document.getElementById('pasteArea').value;
-    const quarter = parseInt(document.getElementById('pasteQuarter').value);
     const className = getSelectedClass();
-    if (!className || !quarter) return;
+    if (!className) return;
 
-    // Improved regex with boundary checks
-    const gradeRegex = /(\b0?\.?(45|55)\b|\b(45|55)\.?0?\b)[\s\t]+([A-Fa-f][+-]?)/gi;
+    // Updated regex to capture quarter numbers
+    const gradeRegex = /(\b0?\.?(45|55)\b|\b(45|55)\.?0?\b)[\s\t]+([1-4])[\s\t]+([A-Fa-f][+-]?)/gi;
     let matches;
     let addedCount = 0;
 
     while ((matches = gradeRegex.exec(text)) !== null) {
-        const [fullMatch, weight, , , grade] = matches;
+        const [_, weight, , , quarter, grade] = matches;
         const numericWeight = parseFloat(weight.replace(/^0?\.?/, ''));
-        const normalizedWeight = numericWeight === 55 ? '0.55' : '0.45';
         const numericGrade = convertToNum(grade.toUpperCase());
+        const normalizedWeight = numericWeight === 55 ? '0.55' : '0.45';
 
-        if (normalizedWeight === '0.45') {
-            classObjects[className].addGrade(quarter, 'pa', numericGrade);
-            addedCount++;
-        } else {
-            classObjects[className].addGrade(quarter, 'sa', numericGrade);
+        if (quarter >= 1 && quarter <= 4) {
+            classObjects[className].addGrade(quarter, normalizedWeight === '0.45' ? 'pa' : 'sa', numericGrade);
             addedCount++;
         }
     }
@@ -396,12 +392,13 @@ function parsePastedGrades() {
     if (addedCount > 0) {
         viewClass(className);
         saveAllData();
-        alert(`Added ${addedCount} grades`);
+        alert(`Added ${addedCount} grades across quarters!`);
         document.getElementById('pasteArea').value = '';
     } else {
-        alert('No valid grades found! Check format: "[45/55] [GRADE]"');
+        alert('No valid grades found! Required format: "[weight] [quarter] [grade]"');
     }
 }
+
 function scrollToDemo() {
   const demoSection = document.getElementById('demoVideo');
   demoSection.scrollIntoView({ behavior: 'smooth' });
