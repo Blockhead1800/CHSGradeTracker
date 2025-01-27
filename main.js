@@ -1,6 +1,7 @@
 toggleTheme()
 updateThemeButton()
 
+
 // Theme Functions
 function toggleTheme() {
     const html = document.documentElement;
