@@ -49,6 +49,16 @@ h1 {
     margin: 15px 0;
 }
 
+textarea {
+    width: 100%;
+    padding: 8px;
+    background-color: var(--secondary-bg);
+    color: var(--primary-text);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin: 5px 0;
+}
+
 input,
 select {
     width: 100%;
