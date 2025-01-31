@@ -88,11 +88,19 @@ class Class {
     }
 
     calculateQuarterGrade(quarter) {
-        const pa = this[`q${quarter}pa`];
-        const sa = this[`q${quarter}sa`];
-        const paAvg = pa.length ? pa.reduce((a, b) => a + b) / pa.length : 0;
-        const saAvg = sa.length ? sa.reduce((a, b) => a + b) / sa.length : 0;
-        this[`q${quarter}f`] = (paAvg * 0.45 + saAvg * 0.55).toFixed(1);
+        const pa = this[`q${quarter}pa`] || [];
+        const sa = this[`q${quarter}sa`] || [];
+
+        const paAvg = pa.length ? pa.reduce((a, b) => a + b, 0) / pa.length : 0;
+        const saAvg = sa.length ? sa.reduce((a, b) => a + b, 0) / sa.length : 0;
+
+        if (pa.length > 0 && sa.length > 0) {
+            this[`q${quarter}f`] = (paAvg * 0.45 + saAvg * 0.55).toFixed(1);
+        } else if (pa.length === 0 && sa.length > 0) {
+            this[`q${quarter}f`] = saAvg.toFixed(1);
+        } else if (pa.length > 0 && sa.length === 0) {
+            this[`q${quarter}f`] = paAvg.toFixed(1);
+        }
     }
 
     setMidterm(grade) {
@@ -110,21 +118,35 @@ class Class {
 
     calculateSemesters() {
         // Semester 1 Calculation
-        const s1 = (
-            (Number(this.q1f || 0) * 0.4) +
-            (Number(this.q2f || 0) * 0.4) +
-            (Number(this.midterm || 0) * 0.2)
-        ).toFixed(1);
-        this.s1f = s1 > 0 ? s1 : null;
-
+        if(this.midterm > 0) {
+          const s1 = (
+              (Number(this.q1f || 0) * 0.4) +
+              (Number(this.q2f || 0) * 0.4) +
+              (Number(this.midterm || 0) * 0.2)
+          ).toFixed(1);
+          this.s1f = s1 > 0 ? s1 : null;
+        } else {
+          const s1 = (
+              (Number(this.q1f || 0) * 0.5) +
+              (Number(this.q2f || 0) * 0.5)
+          ).toFixed(1);
+          this.s1f = s1 > 0 ? s1 : null;
+        }
         // Semester 2 Calculation
-        const s2 = (
-            (Number(this.q3f || 0) * 0.4) +
-            (Number(this.q4f || 0) * 0.4) +
-            (Number(this.finals || 0) * 0.2)
-        ).toFixed(1);
-        this.s2f = s2 > 0 ? s2 : null;
-
+        if(this.final > 0){
+          const s2 = (
+              (Number(this.q3f || 0) * 0.4) +
+              (Number(this.q4f || 0) * 0.4) +
+              (Number(this.finals || 0) * 0.2)
+          ).toFixed(1);
+          this.s2f = s2 > 0 ? s2 : null;
+        } else {
+          const s2 = (
+              (Number(this.q3f || 0) * 0.5) +
+              (Number(this.q4f || 0) * 0.5)
+          ).toFixed(1);
+          this.s2f = s2 > 0 ? s2 : null;
+        }
         // Final Grade Calculation
         this.final = [this.s1f, this.s2f].every(v => v) 
             ? ((Number(this.s1f) + Number(this.s2f)) / 2).toFixed(1)
