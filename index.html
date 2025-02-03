@@ -1,201 +1,478 @@
-
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grade Tracker</title>
-  <link href='style.css' rel='stylesheet'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade Tracker & Schedule</title>
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Styles (you can alternatively move these to style.css) -->
+  <style>
+    :root {
+        --primary-bg: #ffffff;
+        --primary-text: #2d3748;
+        --secondary-bg: #f7fafc;
+        --accent-color: #4299e1;
+        --border-color: #e2e8f0;
+        --card-bg: #ffffff;
+        --semester1-bg: #fff5f5;
+        --semester2-bg: #f0fff4;
+        --danger: #ef4444;
+    }
+      
+    [data-theme="dark"] {
+        --primary-bg: #1a202c;
+        --primary-text: #e2e8f0;
+        --secondary-bg: #2d3748;
+        --accent-color: #63b3ed;
+        --border-color: #4a5568;
+        --card-bg: #2d3748;
+        --semester1-bg: #2d2525;
+        --semester2-bg: #1a2d1a;
+        --danger: #c53030;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background-color: var(--primary-bg);
+        color: var(--primary-text);
+        transition: background-color 0.3s, color 0.3s;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    h1, h2, h3 {
+        color: var(--primary-text);
+        margin: 1em 0 0.5em;
+    }
+    
+    h1 {
+        color: var(--accent-color);
+        border-bottom: 3px solid var(--accent-color);
+        padding-bottom: 0.5em;
+    }
+    
+    .input-group {
+        margin: 15px 0;
+    }
+    
+    textarea {
+        width: 100%;
+        padding: 8px;
+        background-color: var(--secondary-bg);
+        color: var(--primary-text);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        margin: 5px 0;
+    }
+    
+    input,
+    select {
+        width: 100%;
+        max-width: 150px;
+        padding: 8px 12px;
+        background-color: var(--secondary-bg);
+        color: var(--primary-text);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        margin: 5px 0;
+        font-size: 14px;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+    
+    input:focus,
+    select:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 1px var(--accent-color);
+    }
+    
+    button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.75rem;
+        background: linear-gradient(145deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 80%, black));
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    
+    button.danger {
+        background: linear-gradient(145deg, var(--danger), color-mix(in srgb, var(--danger) 80%, black));
+    }
+    
+    .class-management,
+    .quarter-section,
+    .semester-section,
+    .final-grade,
+    #scheduleTab {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .semester-section {
+        background-color: var(--semester1-bg);
+    }
+    
+    .final-grade {
+        background-color: var(--semester2-bg);
+    }
+    
+    .grade-input-group {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+    }
+    
+    .grade-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0;
+    }
+    
+    .grade-item {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        background-color: color-mix(in srgb, var(--accent-color) 10%, transparent);
+        border-radius: 20px;
+        font-size: 14px;
+        transition: transform 0.2s;
+    }
+    
+    .grade-item .remove-btn {
+        margin-left: 8px;
+        padding-left: 8px;
+        border-left: 1px solid var(--border-color);
+        cursor: pointer;
+        opacity: 0.7;
+        color: inherit;
+        background: none;
+        font-weight: 700;
+        transition: all 0.2s;
+        line-height: 1;
+    }
+    
+    .grade-item .remove-btn:hover {
+        opacity: 1;
+        color: var(--danger);
+    }
+    
+    .grade-display {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: var(--accent-color);
+        margin: 10px 0;
+    }
+    
+    .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .theme-toggle:hover {
+        transform: rotate(15deg) scale(1.1);
+    }
+    
+    .help-btn {
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .help-btn:hover {
+        transform: rotate(15deg) scale(1.1);
+    }
+    
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        max-width: 100%;
+        margin: 20px 0;
+    }
+    
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+    }
+    
+    nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+        
+        .grade-input-group {
+            flex-direction: column;
+        }
+        
+        button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+  </style>
 </head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-6S477YSTFG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-6S477YSTFG');
-</script>
 <body>
-
+  <!-- Theme Toggle & Help Buttons -->
   <button class="theme-toggle" onclick="toggleTheme()">🌞</button>
   <button class="help-btn" onclick="scrollToDemo()">❓ Help</button>
-  <div class="class-management">
-    <h1>CHS Grade Tracker</h1>
-    <div class="input-group">
-      <label for="classInput">Class Name:</label>
-      <input type="text" id="classInput">
-      <button onclick="addClass(classInput.value)">Add Class</button>
-    </div>
-    <div class="input-group">
-      <label for="classList">Choose a class:</label>
-      <select id="classList" onchange="viewClass(this.value)"></select>
+  
+  <!-- Navigation Bar -->
+  <nav>
+    <button onclick="showGradeTab()">Grade Tracker</button>
+    <button onclick="showScheduleTab()">Schedule</button>
+  </nav>
+
+  <!-- Grade Tracker Section -->
+  <div id="gradeTab">
+    <div class="class-management">
+      <h1>CHS Grade Tracker</h1>
       <div class="input-group">
-    <button onclick="removeCurrentClass()" class="danger">Delete Selected Class</button>
+        <label for="classInput">Class Name:</label>
+        <input type="text" id="classInput">
+        <button onclick="addClass(classInput.value)">Add Class</button>
+      </div>
+      <div class="input-group">
+        <label for="classList">Choose a class:</label>
+        <select id="classList" onchange="viewClass(this.value)"></select>
+        <div class="input-group">
+          <button onclick="removeCurrentClass()" class="danger">Delete Selected Class</button>
+        </div>
+      </div>
     </div>
-    </div>
-  </div>
-
-<div class="input-group">
-  <label for="pasteArea">Paste Grades From Aspen (click help button for help): </label>
-  <textarea id="pasteArea" rows="5" placeholder="Paste grade data here"></textarea>
-  <button onclick="parsePastedGrades()">Parse and Add Grades</button>
-</div>
-
-  <div class="semester-section">
-    <h2>Semester 1</h2>
     
-    <div class="quarter-section">
-      <h3>Quarter 1</h3>
-      <div class="grade-section">
-        <h4>PA's:</h4>
-        <div id="q1pa" class="grade-list"></div>
-        <div class="grade-input-group">
-          <input id="q1paInput" placeholder="PA Grade">
-          <button onclick="addPA(1)">Add PA Grade</button>
-        </div>
-      </div>
-      
-      <div class="grade-section">
-        <h4>SA's:</h4>
-        <div id="q1sa" class="grade-list"></div>
-        <div class="grade-input-group">
-          <input id="q1saInput" placeholder="SA Grade">
-          <button onclick="addSA(1)">Add SA Grade</button>
-        </div>
-      </div>
-      
-      <div class="grade-display">
-        <h4>Final Quarter 1 Grade: <span id="q1f">-</span></h4>
-      </div>
+    <div class="input-group">
+      <label for="pasteArea">Paste Grades From Aspen (click help button for help): </label>
+      <textarea id="pasteArea" rows="5" placeholder="Paste grade data here"></textarea>
+      <button onclick="parsePastedGrades()">Parse and Add Grades</button>
     </div>
-
-    <div class="quarter-section">
-      <h3>Quarter 2</h3>
-      <div class="grade-section">
-        <h4>PA's:</h4>
-        <div id="q2pa" class="grade-list"></div>
-        <div class="grade-input-group">
-          <input id="q2paInput" placeholder="PA Grade">
-          <button onclick="addPA(2)">Add PA Grade</button>
+    
+    <div class="semester-section">
+      <h2>Semester 1</h2>
+      <div class="quarter-section">
+        <h3>Quarter 1</h3>
+        <div class="grade-section">
+          <h4>PA's:</h4>
+          <div id="q1pa" class="grade-list"></div>
+          <div class="grade-input-group">
+            <input id="q1paInput" placeholder="PA Grade">
+            <button onclick="addPA(1)">Add PA Grade</button>
+          </div>
+        </div>
+        
+        <div class="grade-section">
+          <h4>SA's:</h4>
+          <div id="q1sa" class="grade-list"></div>
+          <div class="grade-input-group">
+            <input id="q1saInput" placeholder="SA Grade">
+            <button onclick="addSA(1)">Add SA Grade</button>
+          </div>
+        </div>
+        
+        <div class="grade-display">
+          <h4>Final Quarter 1 Grade: <span id="q1f">-</span></h4>
         </div>
       </div>
-      
-      <div class="grade-section">
-        <h4>SA's:</h4>
-        <div id="q2sa" class="grade-list"></div>
-        <div class="grade-input-group">
-          <input id="q2saInput" placeholder="SA Grade">
-          <button onclick="addSA(2)">Add SA Grade</button>
+    
+      <div class="quarter-section">
+        <h3>Quarter 2</h3>
+        <div class="grade-section">
+          <h4>PA's:</h4>
+          <div id="q2pa" class="grade-list"></div>
+          <div class="grade-input-group">
+            <input id="q2paInput" placeholder="PA Grade">
+            <button onclick="addPA(2)">Add PA Grade</button>
+          </div>
+        </div>
+        
+        <div class="grade-section">
+          <h4>SA's:</h4>
+          <div id="q2sa" class="grade-list"></div>
+          <div class="grade-input-group">
+            <input id="q2saInput" placeholder="SA Grade">
+            <button onclick="addSA(2)">Add SA Grade</button>
+          </div>
+        </div>
+        
+        <div class="grade-display">
+          <h4>Final Quarter 2 Grade: <span id="q2f">-</span></h4>
         </div>
       </div>
-      
-      <div class="grade-display">
-        <h4>Final Quarter 2 Grade: <span id="q2f">-</span></h4>
-      </div>
-    </div>
-
-    <div class="semester-grade-section">
-      <div class="grade-section">
-        <h3>Midterm Grade:</h3>
-        <div class="grade-input-group">
-          <input id="mInput" placeholder="Midterm Grade">
-          <button onclick="setMidtermGrade()">Set</button>
+    
+      <div class="semester-grade-section">
+        <div class="grade-section">
+          <h3>Midterm Grade:</h3>
+          <div class="grade-input-group">
+            <input id="mInput" placeholder="Midterm Grade">
+            <button onclick="setMidtermGrade()">Set</button>
+          </div>
+          <div class="grade-display">
+            <span id="m">-</span>
+          </div>
         </div>
         <div class="grade-display">
-          <span id="m">-</span>
+          <h3>Semester 1 Final Grade: <span id="s1f">-</span></h3>
         </div>
       </div>
-      <div class="grade-display">
-        <h3>Semester 1 Final Grade: <span id="s1f">-</span></h3>
-      </div>
     </div>
-  </div>
-
-  <div class="semester-section">
-    <h2>Semester 2</h2>
     
-    <div class="quarter-section">
-      <h3>Quarter 3</h3>
-      <div class="grade-section">
-        <h4>PA's:</h4>
-        <div id="q3pa" class="grade-list"></div>
-        <div class="grade-input-group">
-          <input id="q3paInput" placeholder="PA Grade">
-          <button onclick="addPA(3)">Add PA Grade</button>
+    <div class="semester-section">
+      <h2>Semester 2</h2>
+      <div class="quarter-section">
+        <h3>Quarter 3</h3>
+        <div class="grade-section">
+          <h4>PA's:</h4>
+          <div id="q3pa" class="grade-list"></div>
+          <div class="grade-input-group">
+            <input id="q3paInput" placeholder="PA Grade">
+            <button onclick="addPA(3)">Add PA Grade</button>
+          </div>
+        </div>
+        
+        <div class="grade-section">
+          <h4>SA's:</h4>
+          <div id="q3sa" class="grade-list"></div>
+          <div class="grade-input-group">
+            <input id="q3saInput" placeholder="SA Grade">
+            <button onclick="addSA(3)">Add SA Grade</button>
+          </div>
+        </div>
+        
+        <div class="grade-display">
+          <h4>Final Quarter 3 Grade: <span id="q3f">-</span></h4>
         </div>
       </div>
-      
-      <div class="grade-section">
-        <h4>SA's:</h4>
-        <div id="q3sa" class="grade-list"></div>
-        <div class="grade-input-group">
-          <input id="q3saInput" placeholder="SA Grade">
-          <button onclick="addSA(3)">Add SA Grade</button>
+    
+      <div class="quarter-section">
+        <h3>Quarter 4</h3>
+        <div class="grade-section">
+          <h4>PA's:</h4>
+          <div id="q4pa" class="grade-list"></div>
+          <div class="grade-input-group">
+            <input id="q4paInput" placeholder="PA Grade">
+            <button onclick="addPA(4)">Add PA Grade</button>
+          </div>
+        </div>
+        
+        <div class="grade-section">
+          <h4>SA's:</h4>
+          <div id="q4sa" class="grade-list"></div>
+          <div class="grade-input-group">
+            <input id="q4saInput" placeholder="SA Grade">
+            <button onclick="addSA(4)">Add SA Grade</button>
+          </div>
+        </div>
+        
+        <div class="grade-display">
+          <h4>Final Quarter 4 Grade: <span id="q4f">-</span></h4>
         </div>
       </div>
-      
-      <div class="grade-display">
-        <h4>Final Quarter 3 Grade: <span id="q3f">-</span></h4>
-      </div>
-    </div>
-
-    <div class="quarter-section">
-      <h3>Quarter 4</h3>
-      <div class="grade-section">
-        <h4>PA's:</h4>
-        <div id="q4pa" class="grade-list"></div>
-        <div class="grade-input-group">
-          <input id="q4paInput" placeholder="PA Grade">
-          <button onclick="addPA(4)">Add PA Grade</button>
-        </div>
-      </div>
-      
-      <div class="grade-section">
-        <h4>SA's:</h4>
-        <div id="q4sa" class="grade-list"></div>
-        <div class="grade-input-group">
-          <input id="q4saInput" placeholder="SA Grade">
-          <button onclick="addSA(4)">Add SA Grade</button>
-        </div>
-      </div>
-      
-      <div class="grade-display">
-        <h4>Final Quarter 4 Grade: <span id="q4f">-</span></h4>
-      </div>
-    </div>
-
-    <div class="semester-grade-section">
-      <div class="grade-section">
-        <h3>Final Test Grade:</h3>
-        <div class="grade-input-group">
-          <input id="fInput" placeholder="Final Test Grade">
-          <button onclick="setTestGrade()">Set</button>
+    
+      <div class="semester-grade-section">
+        <div class="grade-section">
+          <h3>Final Test Grade:</h3>
+          <div class="grade-input-group">
+            <input id="fInput" placeholder="Final Test Grade">
+            <button onclick="setTestGrade()">Set</button>
+          </div>
+          <div class="grade-display">
+            <span id="finals">-</span>
+          </div>
         </div>
         <div class="grade-display">
-          <span id="finals">-</span>
+          <h3>Semester 2 Final Grade: <span id="s2f">-</span></h3>
         </div>
       </div>
-      <div class="grade-display">
-        <h3>Semester 2 Final Grade: <span id="s2f">-</span></h3>
+    </div>
+    
+    <div class="final-grade">
+      <h2>Final Course Grade: <span id="final">-</span></h2>
+    </div>
+    
+    <div class="demo-section" id="demoVideo">
+      <h2>How to Use</h2>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/0Bd1cTfCJco?si=PaRLccaHYaC3R8eP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
     </div>
+    
+    <p>Made by Joshua Miller</p>
   </div>
-
-  <div class="final-grade">
-    <h2>Final Course Grade: <span id="final">-</span></h2>
+  
+  <!-- Schedule Section -->
+  <!-- Inside the Schedule Tab (e.g., in #scheduleTab) -->
+<div id="scheduleTab" style="display: none;">
+  <h1>Today's Schedule</h1>
+  <!-- Delay buttons -->
+  <div id="delayButtons" style="margin-bottom: 15px;">
+    <button onclick="setDelay('none')">Normal Schedule</button>
+    <button onclick="setDelay('1hr')">1 Hour Delay</button>
+    <button onclick="setDelay('2hr')">2 Hour Delay</button>
   </div>
-
-  <div class="demo-section" id="demoVideo">
-  <h2>How to Use</h2>
-  <div class="video-container">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/0Bd1cTfCJco?si=PaRLccaHYaC3R8eP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  <div id="scheduleInfo">
+    <p id="letterDayDisplay"></p>
+    <p id="scheduleTypeDisplay"></p>
+    <p id="currentPeriodDisplay"></p>
+    <p id="timeRemainingDisplay"></p>
+    <p id="dayRemainingDisplay"></p>
   </div>
 </div>
-
-  <p>Made by Joshua Miller</p>
-  <script src="main.js" defer></script>
-</body>
-</html>
