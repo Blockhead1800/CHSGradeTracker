@@ -261,6 +261,41 @@ button.danger {
   border-radius: 8px;
 }
 
+/* Schedule Tab Styling */
+#scheduleTab {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+#scheduleTab h1 {
+  color: var(--accent-color);
+  margin-bottom: 10px;
+  border-bottom: 3px solid var(--accent-color);
+  padding-bottom: 0.5em;
+}
+
+#scheduleTab p {
+  font-size: 1.1em;
+  margin: 10px 0;
+  color: var(--primary-text);
+}
+
+#scheduleTab button {
+    margin: 20px 0;
+}
+
+#scheduleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+
+
+
 @media (max-width: 768px) {
     body {
         padding: 10px;
