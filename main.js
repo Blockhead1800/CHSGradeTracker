@@ -940,7 +940,7 @@ function updateScheduleTab() {
         nextPeriod.name +
       " – Class: " + nextLetter + " (" + nextClassName + ")";
     } else {
-      nextPeriodDisplay.textContent = "School is over for today.";
+      nextPeriodDisplay.textContent = "No Next Period Right Now!";
     }
     
   } else {
