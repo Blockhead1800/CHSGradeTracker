@@ -28,28 +28,19 @@
   
   <!-- Navigation Bar -->
   <nav>
+    <button onclick="showClassesTab()">Classes</button>
     <button onclick="showGradeTab()">Grade Tracker</button>
     <button onclick="showScheduleTab()">Schedule</button>
   </nav>
 
   <!-- Grade Tracker Section -->
-  <div id="gradeTab">
-    <div class="class-management">
-      <h1>CHS Grade Tracker</h1>
-      <div class="input-group">
-        <label for="classInput">Class Name:</label>
-        <input type="text" id="classInput">
-        <button onclick="addClass(classInput.value)">Add Class</button>
-      </div>
-      <div class="input-group">
-        <label for="classList">Choose a class:</label>
-        <select id="classList" onchange="viewClass(this.value)"></select>
-        <div class="input-group">
-          <button onclick="removeCurrentClass()" class="danger">Delete Selected Class</button>
-        </div>
-      </div>
+  <div id="gradeTab" style="display: none;">
+    <h1>CHS Grade Tracker</h1>
+    <div class="current-class-display">
+      <h3>Current Class Selected: 
+        <select id="currentClassList"   onchange="viewClass(this.value)"></select>
+      </h3>
     </div>
-    
     <div class="input-group">
       <label for="pasteArea">Paste Grades From Aspen (click help button for help): </label>
       <textarea id="pasteArea" rows="5" placeholder="Paste grade data here"></textarea>
@@ -197,14 +188,6 @@
     <div class="final-grade">
       <h2>Final Course Grade: <span id="final">-</span></h2>
     </div>
-    
-    <div class="demo-section" id="demoVideo">
-      <h2>How to Use</h2>
-      <div class="video-container">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/0Bd1cTfCJco?si=PaRLccaHYaC3R8eP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-    </div>
-    <script src="main.js" defer></script>
     <p>Made by Joshua Miller</p>
   </div>
   
@@ -222,10 +205,32 @@
     <p id="letterDayDisplay"></p>
     <p id="scheduleTypeDisplay"></p>
     <p id="currentPeriodDisplay"></p>
+    <p id="nextPeriodDisplay"></p>
     <p id="timeRemainingDisplay"></p>
     <p id="dayRemainingDisplay"></p>
-  </div>
 </div>
+  </div>
+  <p>Made by Joshua Miller</p>
+</div>
+
+<!-- Classes Tab -->
+<div id="classesTab" style="display: block;">
+  <h1>Classes</h1>
+  <button id="addClassBtn" onclick="addNewClass()">Add Class</button>
+  <div id="classesContainer" style="margin-top: 15px;">
+    <!-- Dynamically added class rows will appear here -->
+  </div>
+  <div class="demo-section" id="demoVideo">
+      <h2>How to Use</h2>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/0Bd1cTfCJco?si=PaRLccaHYaC3R8eP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+    </div>
+    <script src="main.js" defer></script>
+    <p>Made by Joshua Miller</p>
+
+</div>
+
 <script src="main.js" defer></script>
 </body>
 </html>
