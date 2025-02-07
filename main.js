@@ -1,7 +1,7 @@
 // =========================
 // GLOBAL STATE
 // =========================
-let classesData = []; 
+let classesData = [];
 // The index (in classesData) of the currently open class in the grade tracker.
 let currentClassIndex = null;
 
@@ -90,14 +90,14 @@ class GradeData {
     Object.assign(this, data);
   }
   addGrade(quarter, type, grade) {
-  let g = grade;
-  if (isNaN(g)) { 
-    g = convertToNum(g); 
-  }
-  if (g < 0 || g > 12) return;
-  this[`q${quarter}${type}`].push(g); // Push the numeric value
-  this.calculateQuarterGrade(quarter);
-  this.calculateSemesters();
+    let g = grade;
+    if (isNaN(g)) {
+      g = convertToNum(g);
+    }
+    if (g < 0 || g > 12) return;
+    this[`q${quarter}${type}`].push(g); // Push the numeric value
+    this.calculateQuarterGrade(quarter);
+    this.calculateSemesters();
   }
   removeGrade(quarter, type, index) {
     this[`q${quarter}${type}`].splice(index, 1);
@@ -170,34 +170,34 @@ class GradeData {
 // =========================
 function convertToNum(letter) {
   const l = letter.toUpperCase();
-  if(l === "A+") return 12;
-  if(l === "A") return 11;
-  if(l === "A-") return 10;
-  if(l === "B+") return 9;
-  if(l === "B") return 8;
-  if(l === "B-") return 7;
-  if(l === "C+") return 6;
-  if(l === "C") return 5;
-  if(l === "C-") return 4;
-  if(l === "F+") return 3;
-  if(l === "F") return 2;
-  if(l === "F-") return 1;
+  if (l === "A+") return 12;
+  if (l === "A") return 11;
+  if (l === "A-") return 10;
+  if (l === "B+") return 9;
+  if (l === "B") return 8;
+  if (l === "B-") return 7;
+  if (l === "C+") return 6;
+  if (l === "C") return 5;
+  if (l === "C-") return 4;
+  if (l === "F+") return 3;
+  if (l === "F") return 2;
+  if (l === "F-") return 1;
   return 0;
 }
 
 function convertToLetter(num) {
-  if(num >= 11.5) return "A+";
-  if(num >= 10.5) return "A";
-  if(num >= 9.5) return "A-";
-  if(num >= 8.5) return "B+";
-  if(num >= 7.5) return "B";
-  if(num >= 6.5) return "B-";
-  if(num >= 5.5) return "C+";
-  if(num >= 4.5) return "C";
-  if(num >= 3.5) return "C-";
-  if(num >= 2.5) return "F+";
-  if(num >= 1.5) return "F";
-  if(num > 0) return "F-";
+  if (num >= 11.5) return "A+";
+  if (num >= 10.5) return "A";
+  if (num >= 9.5) return "A-";
+  if (num >= 8.5) return "B+";
+  if (num >= 7.5) return "B";
+  if (num >= 6.5) return "B-";
+  if (num >= 5.5) return "C+";
+  if (num >= 4.5) return "C";
+  if (num >= 3.5) return "C-";
+  if (num >= 2.5) return "F+";
+  if (num >= 1.5) return "F";
+  if (num > 0) return "F-";
   return "";
 }
 
@@ -267,7 +267,7 @@ function renderClassesPage() {
     row.style.display = 'flex';
     row.style.alignItems = 'center';
     row.style.gap = '10px';
-    
+
     // Name input
     const nameInput = document.createElement('input');
     nameInput.type = 'text';
@@ -279,7 +279,7 @@ function renderClassesPage() {
       renderClassesPage();
       saveAllData();
     });
-    
+
     // Room input
     const roomInput = document.createElement('input');
     roomInput.type = 'text';
@@ -290,7 +290,7 @@ function renderClassesPage() {
       classesData[index].room = roomInput.value.trim();
       saveAllData();
     });
-    
+
     // Period Option dropdown
     const periodSelect = document.createElement('select');
     ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'N/A'].forEach(opt => {
@@ -306,22 +306,22 @@ function renderClassesPage() {
     });
 
     const lunchSelect = document.createElement('select');
-  ["1", "2", "3", "4"].forEach(num => {
-    const option = document.createElement('option');
-    option.value = num;
-    option.textContent = num + (num === "1" ? "st" : num === "2" ? "nd" : num === "3" ? "rd" : "th") + " Lunch";
-    lunchSelect.appendChild(option);
-  });
-  lunchSelect.value = cls.lunch || "1"; // default to 1 if not set
-  lunchSelect.addEventListener('change', () => {
-    classesData[index].lunch = lunchSelect.value;
-    saveAllData();
-    if (document.getElementById('scheduleTab').style.display === 'block') {
-      updateScheduleTab();
-    }
-  });
+    ["1", "2", "3", "4"].forEach(num => {
+      const option = document.createElement('option');
+      option.value = num;
+      option.textContent = num + (num === "1" ? "st" : num === "2" ? "nd" : num === "3" ? "rd" : "th") + " Lunch";
+      lunchSelect.appendChild(option);
+    });
+    lunchSelect.value = cls.lunch || "1"; // default to 1 if not set
+    lunchSelect.addEventListener('change', () => {
+      classesData[index].lunch = lunchSelect.value;
+      saveAllData();
+      if (document.getElementById('scheduleTab').style.display === 'block') {
+        updateScheduleTab();
+      }
+    });
 
-    
+
     // Grades button
     const gradesButton = document.createElement('button');
     gradesButton.textContent = 'Grades';
@@ -331,38 +331,38 @@ function renderClassesPage() {
       renderGradeTracker(); // And then render the grades for the selected class.
       saveAllData();
     });
-    
+
     // Delete button
     const deleteButton = document.createElement('button');
-deleteButton.textContent = '🗑️';
-deleteButton.addEventListener('click', () => {
-  if (confirm(`Delete class "${classesData[index].name}"?`)) {
-    // Remove the class from the data array.
-    classesData.splice(index, 1);
+    deleteButton.textContent = '🗑️';
+    deleteButton.addEventListener('click', () => {
+      if (confirm(`Delete class "${classesData[index].name}"?`)) {
+        // Remove the class from the data array.
+        classesData.splice(index, 1);
 
-    // If the deleted class is the one being viewed...
-    if (currentClassIndex === index) {
-      if (classesData.length > 0) {
-        // If there is at least one class left, select the first one.
-        currentClassIndex = 0;
-        renderGradeTracker();
-      } else {
-        // No classes remain, so clear the tracker.
-        currentClassIndex = null;
-        clearGradeTracker();
+        // If the deleted class is the one being viewed...
+        if (currentClassIndex === index) {
+          if (classesData.length > 0) {
+            // If there is at least one class left, select the first one.
+            currentClassIndex = 0;
+            renderGradeTracker();
+          } else {
+            // No classes remain, so clear the tracker.
+            currentClassIndex = null;
+            clearGradeTracker();
+          }
+          // Optionally, switch to the classes tab so the user sees the updated list.
+          showClassesTab();
+        } else if (currentClassIndex > index) {
+          // If the deleted class is before the current one, adjust the index.
+          currentClassIndex--;
+        }
+
+        renderClassesPage();
+        saveAllData();
       }
-      // Optionally, switch to the classes tab so the user sees the updated list.
-      showClassesTab();
-    } else if (currentClassIndex > index) {
-      // If the deleted class is before the current one, adjust the index.
-      currentClassIndex--;
-    }
-    
-    renderClassesPage();
-    saveAllData();
-  }
-});
-    
+    });
+
     // Append all elements to the row.
     row.appendChild(nameInput);
     row.appendChild(roomInput);
@@ -370,7 +370,7 @@ deleteButton.addEventListener('click', () => {
     row.appendChild(lunchSelect);
     row.appendChild(gradesButton);
     row.appendChild(deleteButton);
-    
+
     container.appendChild(row);
   });
 }
@@ -407,18 +407,18 @@ function renderGradeTracker() {
     ? `${gradeData.midterm} (${convertToLetter(gradeData.midterm)})`
     : '-';
   document.getElementById("m").textContent = mDisplay;
-  
+
   const fDisplay = gradeData.finals !== null
     ? `${gradeData.finals} (${convertToLetter(gradeData.finals)})`
     : '-';
   document.getElementById("finals").textContent = fDisplay;
-  
+
   const s1Display = gradeData.s1f ? `${gradeData.s1f} (${convertToLetter(parseFloat(gradeData.s1f))})` : '-';
   document.getElementById("s1f").textContent = s1Display;
-  
+
   const s2Display = gradeData.s2f ? `${gradeData.s2f} (${convertToLetter(parseFloat(gradeData.s2f))})` : '-';
   document.getElementById("s2f").textContent = s2Display;
-  
+
   const finalDisplay = gradeData.final ? `${gradeData.final} (${convertToLetter(parseFloat(gradeData.final))})` : '-';
   document.getElementById("final").textContent = finalDisplay;
 }
@@ -565,7 +565,7 @@ function viewClass(index) {
 // -------------------------
 // INITIALIZATION
 // -------------------------
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   initializeTheme();
   loadAllData();
 });
@@ -574,13 +574,13 @@ document.addEventListener("DOMContentLoaded", function() {
 // SCHEDULE CODE
 // =========================
 function showScheduleTab() {
-if (currentClassIndex === null && classesData.length > 0) {
-  currentClassIndex = 0;
-}
- document.getElementById('gradeTab').style.display = 'none';
- document.getElementById('classesTab').style.display = 'none';
- document.getElementById('scheduleTab').style.display = 'block';
- updateScheduleTab();
+  if (currentClassIndex === null && classesData.length > 0) {
+    currentClassIndex = 0;
+  }
+  document.getElementById('gradeTab').style.display = 'none';
+  document.getElementById('classesTab').style.display = 'none';
+  document.getElementById('scheduleTab').style.display = 'block';
+  updateScheduleTab();
 }
 
 
@@ -596,40 +596,40 @@ if (currentClassIndex === null && classesData.length > 0) {
 
 
 const holidays = [
- "11/04/2024", "11/05/2024", "11/11/2024", "11/28/2024", "11/29/2024",
- "12/11/2024", "12/23/2024", "12/24/2024", "12/25/2024", "12/26/2024",
- "12/27/2024", "12/30/2024", "12/31/2024",
- "01/01/2025", "01/10/2025", "01/20/2025", "01/27/2025", "01/28/2025",
- "01/29/2025", "01/30/2025", "02/17/2025", "02/18/2025", "02/19/2025",
- "04/01/2025", "04/14/2025", "04/15/2025", "04/16/2025", "04/17/2025",
- "04/18/2025", "05/26/2025"
+  "11/04/2024", "11/05/2024", "11/11/2024", "11/28/2024", "11/29/2024",
+  "12/11/2024", "12/23/2024", "12/24/2024", "12/25/2024", "12/26/2024",
+  "12/27/2024", "12/30/2024", "12/31/2024",
+  "01/01/2025", "01/10/2025", "01/20/2025", "01/27/2025", "01/28/2025",
+  "01/29/2025", "01/30/2025", "02/17/2025", "02/18/2025", "02/19/2025",
+  "04/01/2025", "04/14/2025", "04/15/2025", "04/16/2025", "04/17/2025",
+  "04/18/2025", "05/26/2025"
 ];
 
 
 // Letter day schedule mappings
 const letterDaySchedules = {
- "A": ["A1", "A2", "A3", "A4", "A5"],
- "B": ["A6", "A7", "A1", "A2", "A3"],
- "C": ["A4", "A5", "A6", "A7", "A1"],
- "D": ["A2", "A3", "A4", "A5", "A6"],
- "E": ["A7", "A1", "A2", "A3", "A4"],
- "F": ["A5", "A6", "A7", "A1", "A2"],
- "G": ["A3", "A4", "A5", "A6", "A7"]
+  "A": ["A1", "A2", "A3", "A4", "A5"],
+  "B": ["A6", "A7", "A1", "A2", "A3"],
+  "C": ["A4", "A5", "A6", "A7", "A1"],
+  "D": ["A2", "A3", "A4", "A5", "A6"],
+  "E": ["A7", "A1", "A2", "A3", "A4"],
+  "F": ["A5", "A6", "A7", "A1", "A2"],
+  "G": ["A3", "A4", "A5", "A6", "A7"]
 };
 
 
 function formatTimeLeft(ms) {
- if (ms < 0) ms = 0;
- const totalSeconds = Math.floor(ms / 1000);
- const hours = Math.floor(totalSeconds / 3600);
- const minutes = Math.floor((totalSeconds % 3600) / 60);
- const seconds = totalSeconds % 60;
- const secondsStr = seconds < 10 ? "0" + seconds : seconds;
+  if (ms < 0) ms = 0;
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const secondsStr = seconds < 10 ? "0" + seconds : seconds;
   if (hours > 0) {
-   return `${hours} hour(s) ${minutes} minute(s) ${secondsStr} second(s)`;
- } else {
-   return `${minutes} minute(s) ${secondsStr} second(s)`;
- }
+    return `${hours} hour(s) ${minutes} minute(s) ${secondsStr} second(s)`;
+  } else {
+    return `${minutes} minute(s) ${secondsStr} second(s)`;
+  }
 }
 
 
@@ -644,42 +644,42 @@ let currentDelay = "none";
 
 // School period times for Mon, Tue, Thu, Fri
 const scheduleMonTueThuFri = [
- { name: "Period 1", start: "07:15", end: "08:15" },
- { name: "Period 2", start: "08:20", end: "09:20" },
- { name: "Flex Block", start: "09:25", end: "09:55" },
- { name: "Period 3", start: "10:00", end: "11:00" },
- { name: "Period 4", start: "11:05", end: "12:40" },
- { name: "Period 5", start: "12:45", end: "13:45" }
+  { name: "Period 1", start: "07:15", end: "08:15" },
+  { name: "Period 2", start: "08:20", end: "09:20" },
+  { name: "Flex Block", start: "09:25", end: "09:55" },
+  { name: "Period 3", start: "10:00", end: "11:00" },
+  { name: "Period 4", start: "11:05", end: "12:40" },
+  { name: "Period 5", start: "12:45", end: "13:45" }
 ];
 
 
 // Wednesday schedule
 const scheduleWed = [
- { name: "Period 1", start: "07:15", end: "08:05" },
- { name: "Period 2", start: "08:10", end: "09:00" },
- { name: "Flex Block", start: "09:05", end: "09:20" },
- { name: "Period 3", start: "09:25", end: "10:15" },
- { name: "Period 4", start: "10:20", end: "11:55" },
- { name: "Period 5", start: "12:00", end: "12:45" }
+  { name: "Period 1", start: "07:15", end: "08:05" },
+  { name: "Period 2", start: "08:10", end: "09:00" },
+  { name: "Flex Block", start: "09:05", end: "09:20" },
+  { name: "Period 3", start: "09:25", end: "10:15" },
+  { name: "Period 4", start: "10:20", end: "11:55" },
+  { name: "Period 5", start: "12:00", end: "12:45" }
 ];
 
 
 const oneHourDelaySchedule = [
- { name: "Period 1", start: "08:15", end: "09:10" },  // 55 minutes
- { name: "Period 2", start: "09:15", end: "10:10" },  // 55 minutes
- { name: "Period 3", start: "10:15", end: "11:10" },  // 55 minutes
- { name: "Period 4", start: "11:14", end: "12:46" },  // (duration as given)
- { name: "Period 5", start: "12:50", end: "13:45" }   // 55 minutes
+  { name: "Period 1", start: "08:15", end: "09:10" },  // 55 minutes
+  { name: "Period 2", start: "09:15", end: "10:10" },  // 55 minutes
+  { name: "Period 3", start: "10:15", end: "11:10" },  // 55 minutes
+  { name: "Period 4", start: "11:14", end: "12:46" },  // (duration as given)
+  { name: "Period 5", start: "12:50", end: "13:45" }   // 55 minutes
 ];
 
 
 // Two Hour Delay Schedule (no Flex Block, five periods)
 const twoHourDelaySchedule = [
- { name: "Period 1", start: "09:15", end: "09:55" },  // 45 minutes
- { name: "Period 2", start: "09:55", end: "10:40" },  // 45 minutes
- { name: "Period 3", start: "10:45", end: "11:26" },  // 41 minutes
- { name: "Period 4", start: "11:26", end: "13:01" },  // 11:26 - 1:01 (13:01)
- { name: "Period 5", start: "13:05", end: "13:45" }   // 1:05 - 1:45 (40 minutes)
+  { name: "Period 1", start: "09:15", end: "09:55" },  // 45 minutes
+  { name: "Period 2", start: "09:55", end: "10:40" },  // 45 minutes
+  { name: "Period 3", start: "10:45", end: "11:26" },  // 41 minutes
+  { name: "Period 4", start: "11:26", end: "13:01" },  // 11:26 - 1:01 (13:01)
+  { name: "Period 5", start: "13:05", end: "13:45" }   // 1:05 - 1:45 (40 minutes)
 ];
 
 
@@ -740,14 +740,14 @@ function getLunchSchedule(date) {
 
 
 function setDelay(delaySetting) {
- currentDelay = delaySetting;
- updateScheduleTab(); // Refresh the schedule display
+  currentDelay = delaySetting;
+  updateScheduleTab(); // Refresh the schedule display
 }
 
 function getClassNameByPeriod(letter) {
   for (let cls of classesData) {
     if (cls.periodOption === letter) {
-      return cls.name + (cls.room ? ", " + cls.room: "");
+      return cls.name + (cls.room ? ", " + cls.room : "");
     }
   }
   return letter;
@@ -755,48 +755,48 @@ function getClassNameByPeriod(letter) {
 
 
 function isSchoolDay(date) {
- // Skip weekends
- const day = date.getDay();
- if (day === 0 || day === 6) return false; // Sunday = 0, Saturday = 6
+  // Skip weekends
+  const day = date.getDay();
+  if (day === 0 || day === 6) return false; // Sunday = 0, Saturday = 6
 
 
- // Format the date as MM/DD/YYYY for comparison
- const month = (date.getMonth() + 1).toString().padStart(2, "0");
- const dayStr = date.getDate().toString().padStart(2, "0");
- const formatted = `${month}/${dayStr}/${date.getFullYear()}`;
- if (holidays.includes(formatted)) return false;
+  // Format the date as MM/DD/YYYY for comparison
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const dayStr = date.getDate().toString().padStart(2, "0");
+  const formatted = `${month}/${dayStr}/${date.getFullYear()}`;
+  if (holidays.includes(formatted)) return false;
 
 
- return true;
+  return true;
 }
 
 
 // Returns the number of school days between referenceDate and the given date.
 // (If the given date is before the reference, this function returns a negative number.)
 function countSchoolDays(fromDate, toDate) {
- let count = 0;
- let current = new Date(fromDate);
- // Start counting from the next day (i.e. do not count the reference day)
- current.setDate(current.getDate() + 1);
- const increment = fromDate <= toDate ? 1 : -1;
+  let count = 0;
+  let current = new Date(fromDate);
+  // Start counting from the next day (i.e. do not count the reference day)
+  current.setDate(current.getDate() + 1);
+  const increment = fromDate <= toDate ? 1 : -1;
   while (increment > 0 ? current <= toDate : current >= toDate) {
-   if (isSchoolDay(current)) {
-     count += increment;
-   }
-   current.setDate(current.getDate() + increment);
- }
- return count;
+    if (isSchoolDay(current)) {
+      count += increment;
+    }
+    current.setDate(current.getDate() + increment);
+  }
+  return count;
 }
 
 
 // Given a date, return the letter day (a string) based on the rotation.
 function getLetterDay(date) {
- if (!isSchoolDay(date)) return "No School";
- // Count school days from the reference (inclusive of the reference date)
- const daysDiff = countSchoolDays(referenceDate, date);
- // The reference day (10/31/24) is index 0 in our letterCycle ("D")
- const index = ((daysDiff % letterCycle.length) + letterCycle.length) % letterCycle.length;
- return letterCycle[index];
+  if (!isSchoolDay(date)) return "No School";
+  // Count school days from the reference (inclusive of the reference date)
+  const daysDiff = countSchoolDays(referenceDate, date);
+  // The reference day (10/31/24) is index 0 in our letterCycle ("D")
+  const index = ((daysDiff % letterCycle.length) + letterCycle.length) % letterCycle.length;
+  return letterCycle[index];
 }
 
 
@@ -805,124 +805,124 @@ function getLetterDay(date) {
 // Returns the schedule (array of period objects) for the given date.
 // (If it’s not a school day, returns null.)
 function getDailySchedule(date) {
- if (!isSchoolDay(date)) return null;
+  if (!isSchoolDay(date)) return null;
   // If a delay is set, use the alternative schedule arrays.
- if (currentDelay === "1hr") {
-   return oneHourDelaySchedule;
- } else if (currentDelay === "2hr") {
-   return twoHourDelaySchedule;
- } else {
-   // Otherwise, return the normal schedule.
-   // (For Wednesday, use scheduleWed; otherwise scheduleMonTueThuFri.)
-   return (date.getDay() === 3) ? scheduleWed : scheduleMonTueThuFri;
- }
+  if (currentDelay === "1hr") {
+    return oneHourDelaySchedule;
+  } else if (currentDelay === "2hr") {
+    return twoHourDelaySchedule;
+  } else {
+    // Otherwise, return the normal schedule.
+    // (For Wednesday, use scheduleWed; otherwise scheduleMonTueThuFri.)
+    return (date.getDay() === 3) ? scheduleWed : scheduleMonTueThuFri;
+  }
 }
 
 
 // Converts a time string "HH:MM" into a Date object for the provided date.
 function timeStringToDate(date, timeStr) {
- const [hours, minutes] = timeStr.split(":").map(Number);
- const d = new Date(date);
- d.setHours(hours, minutes, 0, 0);
- return d;
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  const d = new Date(date);
+  d.setHours(hours, minutes, 0, 0);
+  return d;
 }
 
 
 // Given the current time and a daily schedule, determine the current period (if any).
 // Returns an object with period info and time remaining (in minutes) for the current period and day.
 function getCurrentPeriodInfo(date) {
- const schedule = getDailySchedule(date);
- if (!schedule) return null;
+  const schedule = getDailySchedule(date);
+  if (!schedule) return null;
 
 
- const now = new Date();
- let currentPeriod = null;
- let timeLeftInPeriodMs = 0;
+  const now = new Date();
+  let currentPeriod = null;
+  let timeLeftInPeriodMs = 0;
   for (let i = 0; i < schedule.length; i++) {
-   const period = schedule[i];
-   const startTime = timeStringToDate(date, period.start);
-   const endTime = timeStringToDate(date, period.end);
-   if (now >= startTime && now <= endTime) {
-     currentPeriod = {
-       index: i,
-       name: period.name,
-       start: startTime,
-       end: endTime
-     };
-     timeLeftInPeriodMs = endTime - now;
-     break;
-   }
- }
+    const period = schedule[i];
+    const startTime = timeStringToDate(date, period.start);
+    const endTime = timeStringToDate(date, period.end);
+    if (now >= startTime && now <= endTime) {
+      currentPeriod = {
+        index: i,
+        name: period.name,
+        start: startTime,
+        end: endTime
+      };
+      timeLeftInPeriodMs = endTime - now;
+      break;
+    }
+  }
   const lastPeriod = schedule[schedule.length - 1];
- const lastPeriodEnd = timeStringToDate(date, lastPeriod.end);
- const timeLeftInDayMs = now < lastPeriodEnd ? (lastPeriodEnd - now) : 0;
+  const lastPeriodEnd = timeStringToDate(date, lastPeriod.end);
+  const timeLeftInDayMs = now < lastPeriodEnd ? (lastPeriodEnd - now) : 0;
 
 
- return {
-   currentPeriod,
-   timeLeftInPeriodMs,
-   timeLeftInDayMs
- };
+  return {
+    currentPeriod,
+    timeLeftInPeriodMs,
+    timeLeftInDayMs
+  };
 }
 
 
 function getTransitionInfo(date) {
- const schedule = getDailySchedule(date);
- if (!schedule) return null;
- const now = new Date();
+  const schedule = getDailySchedule(date);
+  if (!schedule) return null;
+  const now = new Date();
   // Loop over each adjacent pair in the schedule.
- for (let i = 0; i < schedule.length - 1; i++) {
-   const endTime = timeStringToDate(date, schedule[i].end);
-   const nextStart = timeStringToDate(date, schedule[i+1].start);
-   if (now > endTime && now < nextStart) {
-     // Found a gap between schedule[i] and schedule[i+1].
-     let prevLetter = "";
-     let nextLetter = "";
-     const letterDay = getLetterDay(date);
-    
-     if (currentDelay !== "none") {
-       // For delay schedules, mapping is direct.
-       prevLetter = letterDaySchedules[letterDay][i];
-       nextLetter = letterDaySchedules[letterDay][i+1];
-     } else {
-       // For the normal schedule, we want to ignore the Flex Block.
-       // Define a mapping from schedule indices to letter day indices.
-       const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
-       // Determine effective indices:
-       // If the gap is adjacent to the Flex Block, adjust:
-       // Example: gap between period 2 (index 1) and Flex Block (index 2) or between Flex Block (index 2) and period 3 (index 3).
-       let effectivePrevIndex, effectiveNextIndex;
-       if (schedule[i].name === "Flex Block") {
-         // If the earlier period is Flex Block, use period 2 instead.
-         effectivePrevIndex = mapping[1];
-       } else {
-         effectivePrevIndex = mapping[i] !== undefined ? mapping[i] : null;
-       }
-       if (schedule[i+1].name === "Flex Block") {
-         // If the later period is Flex Block, use period 3 instead.
-         effectiveNextIndex = mapping[3];
-       } else {
-         effectiveNextIndex = mapping[i+1] !== undefined ? mapping[i+1] : null;
-       }
-       if (effectivePrevIndex !== null) {
-         prevLetter = letterDaySchedules[letterDay][effectivePrevIndex];
-       }
-       if (effectiveNextIndex !== null) {
-         nextLetter = letterDaySchedules[letterDay][effectiveNextIndex];
-       }
-     }
-    
-     return {
-       gap: true,
-       prevPeriod: schedule[i],
-       nextPeriod: schedule[i+1],
-       prevLetter: prevLetter,
-       nextLetter: nextLetter,
-       timeUntilNextMs: nextStart - now
-     };
-   }
- }
- return null;
+  for (let i = 0; i < schedule.length - 1; i++) {
+    const endTime = timeStringToDate(date, schedule[i].end);
+    const nextStart = timeStringToDate(date, schedule[i + 1].start);
+    if (now > endTime && now < nextStart) {
+      // Found a gap between schedule[i] and schedule[i+1].
+      let prevLetter = "";
+      let nextLetter = "";
+      const letterDay = getLetterDay(date);
+
+      if (currentDelay !== "none") {
+        // For delay schedules, mapping is direct.
+        prevLetter = letterDaySchedules[letterDay][i];
+        nextLetter = letterDaySchedules[letterDay][i + 1];
+      } else {
+        // For the normal schedule, we want to ignore the Flex Block.
+        // Define a mapping from schedule indices to letter day indices.
+        const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
+        // Determine effective indices:
+        // If the gap is adjacent to the Flex Block, adjust:
+        // Example: gap between period 2 (index 1) and Flex Block (index 2) or between Flex Block (index 2) and period 3 (index 3).
+        let effectivePrevIndex, effectiveNextIndex;
+        if (schedule[i].name === "Flex Block") {
+          // If the earlier period is Flex Block, use period 2 instead.
+          effectivePrevIndex = mapping[1];
+        } else {
+          effectivePrevIndex = mapping[i] !== undefined ? mapping[i] : null;
+        }
+        if (schedule[i + 1].name === "Flex Block") {
+          // If the later period is Flex Block, use period 3 instead.
+          effectiveNextIndex = mapping[3];
+        } else {
+          effectiveNextIndex = mapping[i + 1] !== undefined ? mapping[i + 1] : null;
+        }
+        if (effectivePrevIndex !== null) {
+          prevLetter = letterDaySchedules[letterDay][effectivePrevIndex];
+        }
+        if (effectiveNextIndex !== null) {
+          nextLetter = letterDaySchedules[letterDay][effectiveNextIndex];
+        }
+      }
+
+      return {
+        gap: true,
+        prevPeriod: schedule[i],
+        nextPeriod: schedule[i + 1],
+        prevLetter: prevLetter,
+        nextLetter: nextLetter,
+        timeUntilNextMs: nextStart - now
+      };
+    }
+  }
+  return null;
 }
 
 
@@ -935,7 +935,7 @@ function updateScheduleTab() {
   const now = new Date();
   const letterDay = getLetterDay(now);
   const schedule = getDailySchedule(now);
-  
+
   // Get your display elements
   const letterDayDisplay = document.getElementById("letterDayDisplay");
   const scheduleTypeDisplay = document.getElementById("scheduleTypeDisplay");
@@ -958,7 +958,7 @@ function updateScheduleTab() {
     letterDayDisplay.textContent = "No school today.";
     return;
   }
-  
+
   letterDayDisplay.textContent = "Letter Day: " + letterDay;
   let scheduleTypeText = "Normal Schedule";
   if (currentDelay === "1hr") {
@@ -967,9 +967,9 @@ function updateScheduleTab() {
     scheduleTypeText = "Two Hour Delay";
   }
   scheduleTypeDisplay.textContent = "Schedule Type: " + scheduleTypeText;
-  
+
   const periodInfo = getCurrentPeriodInfo(now);
-  
+
   if (periodInfo && periodInfo.currentPeriod) {
     if (periodInfo.currentPeriod.name.toLowerCase() === "flex block") {
       currentPeriodDisplay.textContent = "Flex Block";
@@ -1031,19 +1031,36 @@ function updateScheduleTab() {
       currentPeriodDisplay.textContent = "No class is currently in session.";
     }
   }
-  
+
   // --------------
   // LUNCH INFO
   // --------------
-  // Use the active class: if currentClassIndex is defined use that,
-  // otherwise (if no class is selected) fall back to the first class in classesData.
-  let activeClass = null;
-  if (typeof currentClassIndex === "number" && classesData && classesData[currentClassIndex]) {
-    activeClass = classesData[currentClassIndex];
-  } else if (classesData && classesData.length > 0) {
-    activeClass = classesData[0];
+  let lunchA = "";
+  if (letterDay == 'A') {
+    lunchA = "A4";
+  } else if (letterDay == 'B') {
+    lunchA = "A2";
+  } else if (letterDay == 'C') {
+    lunchA = "A7";
+  } else if (letterDay == 'D') {
+    lunchA = "A5";
+  } else if (letterDay == 'E') {
+    lunchA = "A3";
+  } else if (letterDay == 'F') {
+    lunchA = "A1";
+  } else if (letterDay == 'G') {
+    lunchA = "A6";
   }
-  
+  let indexT = -1;
+
+  for (let i = 0; i < classesData.length; i++) {
+    if (classesData[i].periodOption === lunchA) {
+      indexT = i;
+      break;
+    }
+  }
+  let activeClass = classesData[indexT];
+
   if (activeClass && activeClass.lunch) {
     const lunchSelection = parseInt(activeClass.lunch); // expected to be 1, 2, 3, or 4
     const lunchSchedule = getLunchSchedule(now);
@@ -1053,7 +1070,7 @@ function updateScheduleTab() {
       const lunchStart = timeStringToDate(now, lunchInfo.start);
       const timeUntilLunchMs = lunchStart - now;
       const formattedTimeUntilLunch = formatTimeLeft(timeUntilLunchMs);
-      
+
       // Set the lunch display (using innerHTML so we can include a <br> for line break)
       lunchDisplay.innerHTML = "You have " + lunchInfo.lunch +
         " lunch at " + lunchInfo.start + " - " + lunchInfo.end +
@@ -1068,10 +1085,10 @@ function updateScheduleTab() {
 
 
 // (Optional) Refresh the schedule info every minute.
-setInterval(function(){
- if(document.getElementById("scheduleTab").style.display !== "none"){
-   updateScheduleTab();
- }
+setInterval(function () {
+  if (document.getElementById("scheduleTab").style.display !== "none") {
+    updateScheduleTab();
+  }
 }, 1000);
 
 
