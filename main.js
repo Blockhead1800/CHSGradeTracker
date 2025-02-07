@@ -1072,9 +1072,11 @@ function updateScheduleTab() {
       const formattedTimeUntilLunch = formatTimeLeft(timeUntilLunchMs);
 
       // Set the lunch display (using innerHTML so we can include a <br> for line break)
-      lunchDisplay.innerHTML = "You have " + lunchInfo.lunch +
-        " lunch at " + lunchInfo.start + " - " + lunchInfo.end +
-        ". " + formattedTimeUntilLunch + " until lunch.";
+      if (formattedTimeUntilLunch != "0 minute(s) 00 second(s)") {
+        lunchDisplay.innerHTML = "You have " + lunchInfo.lunch +
+          " lunch at " + lunchInfo.start + " - " + lunchInfo.end +
+          ". " + formattedTimeUntilLunch + " until lunch.";
+      }
     }
   } else {
     lunchDisplay.textContent = "";
