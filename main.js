@@ -379,7 +379,6 @@ function addNewClass() {
     name: "",
     room: "",
     type: "Full Year Class",
-    lunch: "1",
     periodOption: "A1",
     gradeData: new GradeData()
   });
