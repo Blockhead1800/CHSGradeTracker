@@ -220,6 +220,9 @@ function loadAllData() {
 
     // Re-establish GradeData methods by re-creating instances
     classesData.forEach(cls => {
+      if (!cls.hasOwnProperty('lunch')) {
+        cls.lunch = "1"; // Default to 1st lunch
+      }
       if (cls.gradeData) {
         const gd = new GradeData();
         gd.restore(cls.gradeData);
@@ -375,8 +378,8 @@ function addNewClass() {
   classesData.push({
     name: "",
     room: "",
-    lunch: "1",
     type: "Full Year Class",
+    lunch: "1",
     periodOption: "A1",
     gradeData: new GradeData()
   });
@@ -569,6 +572,9 @@ document.addEventListener("DOMContentLoaded", function() {
 // SCHEDULE CODE
 // =========================
 function showScheduleTab() {
+if (currentClassIndex === null && classesData.length > 0) {
+  currentClassIndex = 0;
+}
  document.getElementById('gradeTab').style.display = 'none';
  document.getElementById('classesTab').style.display = 'none';
  document.getElementById('scheduleTab').style.display = 'block';
