@@ -375,6 +375,7 @@ function addNewClass() {
   classesData.push({
     name: "",
     room: "",
+    lunch: "1",
     type: "Full Year Class",
     periodOption: "A1",
     gradeData: new GradeData()
