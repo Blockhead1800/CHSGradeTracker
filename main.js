@@ -316,6 +316,9 @@ function renderClassesPage() {
   lunchSelect.addEventListener('change', () => {
     classesData[index].lunch = lunchSelect.value;
     saveAllData();
+    if (document.getElementById('scheduleTab').style.display === 'block') {
+      updateScheduleTab();
+    }
   });
 
     
