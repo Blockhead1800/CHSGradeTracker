@@ -5,6 +5,10 @@ let classesData = [];
 // The index (in classesData) of the currently open class in the grade tracker.
 let currentClassIndex = null;
 
+document.addEventListener("DOMContentLoaded", () => {
+  updateScheduleTab();
+});
+
 // =========================
 // THEME & COOKIE FUNCTIONS
 // =========================
@@ -35,7 +39,7 @@ function updateThemeButton(theme) {
 }
 
 function initializeTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'dark';
+  const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeButton(savedTheme);
 }
