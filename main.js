@@ -1,120 +1,7 @@
 // =========================
 // GLOBAL STATE
 // =========================
-
-var config = {
-  "startDate": "2025-01-31",
-  "holidays": [
-    "11/04/2024",
-    "11/05/2024",
-    "11/11/2024",
-    "11/28/2024",
-    "11/29/2024",
-    "12/11/2024",
-    "12/23/2024",
-    "12/24/2024",
-    "12/25/2024",
-    "12/26/2024",
-    "12/27/2024",
-    "12/30/2024",
-    "12/31/2024",
-    "01/01/2025",
-    "01/10/2025",
-    "01/20/2025",
-    "01/27/2025",
-    "01/28/2025",
-    "01/29/2025",
-    "01/30/2025",
-    "02/17/2025",
-    "02/18/2025",
-    "02/19/2025",
-    "04/01/2025",
-    "04/14/2025",
-    "04/15/2025",
-    "04/16/2025",
-    "04/17/2025",
-    "04/18/2025",
-    "05/26/2025"
-  ],
-  "normalMonTueThuFriSchedule": [
-    { "name": "Period 1", "start": "07:15", "end": "08:15" },
-    { "name": "Period 2", "start": "08:20", "end": "09:20" },
-    { "name": "Flex Block", "start": "09:25", "end": "09:55" },
-    { "name": "Period 3", "start": "10:00", "end": "11:00" },
-    { "name": "Period 4", "start": "11:05", "end": "12:40" },
-    { "name": "Period 5", "start": "12:45", "end": "13:45" }
-  ],
-  "normalWednesdaySchedule": [
-    { "name": "Period 1", "start": "07:15", "end": "08:05" },
-    { "name": "Period 2", "start": "08:10", "end": "09:00" },
-    { "name": "Flex Block", "start": "09:05", "end": "09:20" },
-    { "name": "Period 3", "start": "09:25", "end": "10:15" },
-    { "name": "Period 4", "start": "10:20", "end": "11:55" },
-    { "name": "Period 5", "start": "12:00", "end": "12:45" }
-  ],
-  "oneHourDelaySchedule": [
-    { "name": "Period 1", "start": "08:15", "end": "09:10" },
-    { "name": "Period 2", "start": "09:15", "end": "10:10" },
-    { "name": "Period 3", "start": "10:15", "end": "11:10" },
-    { "name": "Period 4", "start": "11:14", "end": "12:46" },
-    { "name": "Period 5", "start": "12:50", "end": "13:45" }
-  ],
-  "twoHourDelaySchedule": [
-    { "name": "Period 1", "start": "09:15", "end": "09:55" },
-    { "name": "Period 2", "start": "09:55", "end": "10:40" },
-    { "name": "Period 3", "start": "10:45", "end": "11:26" },
-    { "name": "Period 4", "start": "11:26", "end": "13:01" },
-    { "name": "Period 5", "start": "13:05", "end": "13:45" }
-  ],
-  "lunchNormalSchedule": [
-    { "lunch": "1st", "start": "11:05", "end": "11:25" },
-    { "lunch": "2nd", "start": "11:30", "end": "11:50" },
-    { "lunch": "3rd", "start": "11:55", "end": "12:15" },
-    { "lunch": "4th", "start": "12:20", "end": "12:40" }
-  ],
-  "lunchWednesdaySchedule": [
-    { "lunch": "1st", "start": "10:20", "end": "10:40" },
-    { "lunch": "2nd", "start": "10:45", "end": "11:05" },
-    { "lunch": "3rd", "start": "11:10", "end": "11:30" },
-    { "lunch": "4th", "start": "11:35", "end": "11:55" }
-  ],
-  "lunchOneHourDelaySchedule": [
-    { "lunch": "1st", "start": "11:14", "end": "11:34" },
-    { "lunch": "2nd", "start": "11:38", "end": "11:58" },
-    { "lunch": "3rd", "start": "12:02", "end": "12:22" },
-    { "lunch": "4th", "start": "12:26", "end": "12:46" }
-  ],
-  "lunchTwoHourDelaySchedule": [
-    { "lunch": "1st", "start": "11:30", "end": "11:50" },
-    { "lunch": "2nd", "start": "11:54", "end": "12:14" },
-    { "lunch": "3rd", "start": "12:17", "end": "12:37" },
-    { "lunch": "4th", "start": "12:41", "end": "13:01" }
-  ],
-  "letterCycle": ["A", "B", "C", "D", "E", "F", "G"],
-  "letterDaySchedules": {
-    "A": ["A1", "A2", "A3", "A4", "A5"],
-    "B": ["A6", "A7", "A1", "A2", "A3"],
-    "C": ["A4", "A5", "A6", "A7", "A1"],
-    "D": ["A2", "A3", "A4", "A5", "A6"],
-    "E": ["A7", "A1", "A2", "A3", "A4"],
-    "F": ["A5", "A6", "A7", "A1", "A2"],
-    "G": ["A3", "A4", "A5", "A6", "A7"]
-  }
-}
-
-let referenceDate = new Date(config.startDate);
-let holidays = config.holidays;
-let scheduleMonTueThuFri = config.normalMonTueThuFriSchedule;
-let scheduleWed = config.normalWednesdaySchedule;
-let oneHourDelaySchedule = config.oneHourDelaySchedule;
-let twoHourDelaySchedule = config.twoHourDelaySchedule;
-let lunchScheduleNormal = config.lunchNormalSchedule;
-let lunchScheduleWed = config.lunchWednesdaySchedule;
-let lunchScheduleOneHourDelay = config.lunchOneHourDelaySchedule;
-let lunchScheduleTwoHourDelay = config.lunchTwoHourDelaySchedule;
-let letterCycle = config.letterCycle;
-let letterDaySchedules = config.letterDaySchedules;
-
+let classesData = [];
 // The index (in classesData) of the currently open class in the grade tracker.
 let currentClassIndex = null;
 
@@ -751,6 +638,42 @@ function selectDateFromPicker() {
   datePicker.style.display = "none";
 }
 
+
+
+// -------------------------
+// SCHEDULE CONFIGURATION
+// -------------------------
+
+
+// The holiday dates (month/day format) to skip (adjust the format to match Date comparisons)
+
+
+// Global variable to track delay setting ("none", "1hr", or "2hr")
+
+
+const holidays = [
+  "11/04/2024", "11/05/2024", "11/11/2024", "11/28/2024", "11/29/2024",
+  "12/11/2024", "12/23/2024", "12/24/2024", "12/25/2024", "12/26/2024",
+  "12/27/2024", "12/30/2024", "12/31/2024",
+  "01/01/2025", "01/10/2025", "01/20/2025", "01/27/2025", "01/28/2025",
+  "01/29/2025", "01/30/2025", "02/17/2025", "02/18/2025", "02/19/2025",
+  "04/01/2025", "04/14/2025", "04/15/2025", "04/16/2025", "04/17/2025",
+  "04/18/2025", "05/26/2025"
+];
+
+
+// Letter day schedule mappings
+const letterDaySchedules = {
+  "A": ["A1", "A2", "A3", "A4", "A5"],
+  "B": ["A6", "A7", "A1", "A2", "A3"],
+  "C": ["A4", "A5", "A6", "A7", "A1"],
+  "D": ["A2", "A3", "A4", "A5", "A6"],
+  "E": ["A7", "A1", "A2", "A3", "A4"],
+  "F": ["A5", "A6", "A7", "A1", "A2"],
+  "G": ["A3", "A4", "A5", "A6", "A7"]
+};
+
+
 function formatTimeLeft(ms) {
   if (ms < 0) ms = 0;
   const totalSeconds = Math.floor(ms / 1000);
@@ -766,7 +689,89 @@ function formatTimeLeft(ms) {
 }
 
 
+
+
+// The rotation order starting with D day on 10/31/24
+const letterCycle = ["D", "E", "F", "G", "A", "B", "C"];
+
+
 let currentDelay = "none";
+
+
+// School period times for Mon, Tue, Thu, Fri
+const scheduleMonTueThuFri = [
+  { name: "Period 1", start: "07:15", end: "08:15" },
+  { name: "Period 2", start: "08:20", end: "09:20" },
+  { name: "Flex Block", start: "09:25", end: "09:55" },
+  { name: "Period 3", start: "10:00", end: "11:00" },
+  { name: "Period 4", start: "11:05", end: "12:40" },
+  { name: "Period 5", start: "12:45", end: "13:45" }
+];
+
+
+// Wednesday schedule
+const scheduleWed = [
+  { name: "Period 1", start: "07:15", end: "08:05" },
+  { name: "Period 2", start: "08:10", end: "09:00" },
+  { name: "Flex Block", start: "09:05", end: "09:20" },
+  { name: "Period 3", start: "09:25", end: "10:15" },
+  { name: "Period 4", start: "10:20", end: "11:55" },
+  { name: "Period 5", start: "12:00", end: "12:45" }
+];
+
+
+const oneHourDelaySchedule = [
+  { name: "Period 1", start: "08:15", end: "09:10" },  // 55 minutes
+  { name: "Period 2", start: "09:15", end: "10:10" },  // 55 minutes
+  { name: "Period 3", start: "10:15", end: "11:10" },  // 55 minutes
+  { name: "Period 4", start: "11:14", end: "12:46" },  // (duration as given)
+  { name: "Period 5", start: "12:50", end: "13:45" }   // 55 minutes
+];
+
+
+// Two Hour Delay Schedule (no Flex Block, five periods)
+const twoHourDelaySchedule = [
+  { name: "Period 1", start: "09:15", end: "09:55" },  // 45 minutes
+  { name: "Period 2", start: "09:55", end: "10:40" },  // 45 minutes
+  { name: "Period 3", start: "10:45", end: "11:26" },  // 41 minutes
+  { name: "Period 4", start: "11:26", end: "13:01" },  // 11:26 - 1:01 (13:01)
+  { name: "Period 5", start: "13:05", end: "13:45" }   // 1:05 - 1:45 (40 minutes)
+];
+
+
+// Reference school day: 10/31/2024 is a D day.
+const referenceDate = new Date("2024-10-31");
+
+// -------------------------
+// LUNCH SCHEDULES
+// -------------------------
+const lunchScheduleNormal = [
+  { lunch: "1st", start: "11:05", end: "11:25" },
+  { lunch: "2nd", start: "11:30", end: "11:50" },
+  { lunch: "3rd", start: "11:55", end: "12:15" },
+  { lunch: "4th", start: "12:20", end: "12:40" }
+];
+
+const lunchScheduleWed = [
+  { lunch: "1st", start: "10:20", end: "10:40" },
+  { lunch: "2nd", start: "10:45", end: "11:05" },
+  { lunch: "3rd", start: "11:10", end: "11:30" },
+  { lunch: "4th", start: "11:35", end: "11:55" }
+];
+
+const lunchScheduleOneHourDelay = [
+  { lunch: "1st", start: "11:14", end: "11:34" },
+  { lunch: "2nd", start: "11:38", end: "11:58" },
+  { lunch: "3rd", start: "12:02", end: "12:22" },
+  { lunch: "4th", start: "12:26", end: "12:46" }
+];
+
+const lunchScheduleTwoHourDelay = [
+  { lunch: "1st", start: "11:30", end: "11:50" },
+  { lunch: "2nd", start: "11:54", end: "12:14" },
+  { lunch: "3rd", start: "12:17", end: "12:37" },
+  { lunch: "4th", start: "12:41", end: "1:01" }
+];
 
 // Returns the appropriate lunch schedule array for the given date,
 // based on the currentDelay setting and (if no delay) whether it’s Wednesday.
