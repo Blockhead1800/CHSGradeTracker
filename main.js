@@ -1182,6 +1182,387 @@ setInterval(function () {
   }
 }, 1000);
 
+document.addEventListener("DOMContentLoaded", function () {
+    const pasteArea = document.getElementById("pasteArea");
+    
+    pasteArea.addEventListener("input", function () {
+        if (pasteArea.value.trim().toLowerCase() === "tetris") {
+            showTetrisOverlay();
+        }
+    });
+
+    function showTetrisOverlay() {
+        if (document.getElementById("tetrisOverlay")) return; // Prevent multiple instances
+        
+        // Create overlay
+        const overlay = document.createElement("div");
+        overlay.id = "tetrisOverlay";
+        overlay.innerHTML = `
+            <div id="tetrisContainer">
+                <canvas id="tetrisCanvas"></canvas>
+                <div id="score">Score: 0</div>
+                <div id="highScore">High Score: 0</div>
+                <button id="closeTetris">Close</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        // Style overlay
+        Object.assign(overlay.style, {
+            position: "fixed", top: "0", left: "0", width: "100vw", height: "100vh", 
+            backgroundColor: "rgba(0, 0, 0, 0.8)", display: "flex", 
+            justifyContent: "center", alignItems: "center", zIndex: "1000"
+        });
+
+        Object.assign(overlay.querySelector("#tetrisContainer").style, {
+            display: "flex", flexDirection: "column", alignItems: "center"
+        });
+
+        document.getElementById("closeTetris").addEventListener("click", function () {
+            document.body.removeChild(overlay);
+        });
+        
+        startTetris();
+    }
+
+    function startTetris() {
+        const canvas = document.getElementById("tetrisCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 200;
+        canvas.height = 400;
+        const rows = 20;
+        const cols = 10;
+        const blockSize = 20;
+        let board = Array.from({ length: rows }, () => Array(cols).fill(0));
+        let score = 0;
+        let highScore = localStorage.getItem("tetrisHighScore") || 0;
+        document.getElementById("highScore").textContent = "High Score: " + highScore;
+
+        function drawBoard() {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (board[r][c]) {
+                        ctx.fillStyle = "white";
+                        ctx.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
+                    }
+                }
+            }
+        }
+
+        function updateScore(newScore) {
+            score = newScore;
+            document.getElementById("score").textContent = "Score: " + score;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem("tetrisHighScore", highScore);
+                document.getElementById("highScore").textContent = "High Score: " + highScore;
+            }
+        }
+
+        function gameLoop() {
+            drawBoard();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    }
+});
+
+
+// =======================
+// 1. Monitor the Paste Area
+// =======================
+document.getElementById("pasteArea").addEventListener("input", function (e) {
+  const value = e.target.value.trim().toLowerCase();
+  if (value === "tetris") {
+    showTetrisOverlay();
+    e.target.value = ""; // clear the input after activation
+  }
+});
+
+// =======================
+// 2. Tetris Overlay Show/Hide Functions
+// =======================
+let currentTetrisGame = null;
+
+function showTetrisOverlay() {
+  const overlay = document.getElementById("tetrisOverlay");
+  overlay.style.display = "block";
+
+  // Get the canvas element and start the game.
+  const canvas = document.getElementById("tetrisCanvas");
+  currentTetrisGame = new TetrisGame(canvas);
+  currentTetrisGame.update();
+
+  // (Optional) Set focus so key events work immediately
+  window.focus();
+}
+
+document.getElementById("closeTetrisBtn").addEventListener("click", function () {
+  // Cancel the animation frame to stop the game loop
+  if (currentTetrisGame && currentTetrisGame.animationFrameId) {
+    cancelAnimationFrame(currentTetrisGame.animationFrameId);
+  }
+  document.getElementById("tetrisOverlay").style.display = "none";
+  currentTetrisGame = null;
+});
+
+// =======================
+// 3. Tetris Game Implementation
+// =======================
+
+// Constants and Tetromino definitions
+const COLS = 10;
+const ROWS = 20;
+const BLOCK_SIZE = 30; // size in pixels for drawing each block
+
+const COLORS = [
+  null,
+  'cyan',    // I
+  'yellow',  // O
+  'purple',  // T
+  'green',   // S
+  'red',     // Z
+  'blue',    // J
+  'orange'   // L
+];
+
+const SHAPES = [
+  [], // index 0 unused
+  [   // I
+    [0, 0, 0, 0],
+    [1, 1, 1, 1],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+  ],
+  [   // O
+    [2, 2],
+    [2, 2]
+  ],
+  [   // T
+    [0, 3, 0],
+    [3, 3, 3],
+    [0, 0, 0]
+  ],
+  [   // S
+    [0, 4, 4],
+    [4, 4, 0],
+    [0, 0, 0]
+  ],
+  [   // Z
+    [5, 5, 0],
+    [0, 5, 5],
+    [0, 0, 0]
+  ],
+  [   // J
+    [6, 0, 0],
+    [6, 6, 6],
+    [0, 0, 0]
+  ],
+  [   // L
+    [0, 0, 7],
+    [7, 7, 7],
+    [0, 0, 0]
+  ]
+];
+
+// TetrisGame "class" definition
+function TetrisGame(canvas) {
+  this.canvas = canvas;
+  this.ctx = canvas.getContext("2d");
+  this.board = this.createBoard();
+  this.score = 0;
+  // Load high score from localStorage (or start at 0)
+  this.highScore = parseInt(localStorage.getItem("tetrisHighScore") || "0", 10);
+  this.gameOver = false;
+  this.dropCounter = 0;
+  this.dropInterval = 1000; // drop every 1 second
+  this.lastTime = 0;
+  this.currentPiece = this.createPiece();
+
+  // Bind key events for game control.
+  // (Note: these events are global. In a more complex app, you might want to add/remove them when showing/hiding the game.)
+  this.keyHandler = this.handleKey.bind(this);
+  document.addEventListener("keydown", this.keyHandler);
+}
+
+TetrisGame.prototype.createBoard = function () {
+  const board = [];
+  for (let y = 0; y < ROWS; y++) {
+    board[y] = new Array(COLS).fill(0);
+  }
+  return board;
+};
+
+TetrisGame.prototype.createPiece = function () {
+  // Choose a random tetromino type from 1 to 7.
+  const type = Math.floor(Math.random() * (SHAPES.length - 1)) + 1;
+  const shape = SHAPES[type];
+  return {
+    matrix: shape,
+    x: Math.floor(COLS / 2 - shape[0].length / 2),
+    y: -1,  // Allow the piece to spawn slightly above the board.
+    type: type
+  };
+};
+
+TetrisGame.prototype.drawMatrix = function (matrix, offset) {
+  matrix.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        this.ctx.fillStyle = COLORS[value];
+        this.ctx.fillRect((x + offset.x) * BLOCK_SIZE, (y + offset.y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        this.ctx.strokeStyle = 'black';
+        this.ctx.strokeRect((x + offset.x) * BLOCK_SIZE, (y + offset.y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+      }
+    });
+  });
+};
+
+TetrisGame.prototype.drawBoard = function () {
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      if (this.board[y][x] !== 0) {
+        this.ctx.fillStyle = COLORS[this.board[y][x]];
+        this.ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        this.ctx.strokeStyle = 'black';
+        this.ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+      } else {
+        // Draw empty cell
+        this.ctx.fillStyle = '#000';
+        this.ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+      }
+    }
+  }
+};
+
+TetrisGame.prototype.mergePiece = function (piece) {
+  piece.matrix.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        this.board[y + piece.y][x + piece.x] = value;
+      }
+    });
+  });
+};
+
+TetrisGame.prototype.rotateMatrix = function (matrix) {
+  // Rotate the matrix clockwise: transpose then reverse each row.
+  const N = matrix.length;
+  const result = [];
+  for (let x = 0; x < N; x++) {
+    result[x] = [];
+    for (let y = 0; y < N; y++) {
+      result[x][y] = matrix[N - 1 - y][x];
+    }
+  }
+  return result;
+};
+
+TetrisGame.prototype.collide = function (board, piece) {
+  const m = piece.matrix;
+  for (let y = 0; y < m.length; y++) {
+    for (let x = 0; x < m[y].length; x++) {
+      if (m[y][x] !== 0) {
+        const boardY = y + piece.y;
+        const boardX = x + piece.x;
+        // Skip cells that are above the board.
+        if (boardY < 0) continue;
+        if (boardY >= ROWS || boardX < 0 || boardX >= COLS || board[boardY][boardX] !== 0) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
+
+TetrisGame.prototype.clearLines = function () {
+  // Check from bottom to top and remove full lines.
+  outer: for (let y = ROWS - 1; y >= 0; y--) {
+    if (this.board[y].every(val => val !== 0)) {
+      this.board.splice(y, 1);
+      this.board.unshift(new Array(COLS).fill(0));
+      this.score += 10; // award 10 points per cleared line
+      y++; // re-check same row index after shifting
+    }
+  }
+};
+
+TetrisGame.prototype.drop = function () {
+  this.currentPiece.y++;
+  if (this.collide(this.board, this.currentPiece)) {
+    this.currentPiece.y--;
+    this.mergePiece(this.currentPiece);
+    this.clearLines();
+    this.currentPiece = this.createPiece();
+    if (this.collide(this.board, this.currentPiece)) {
+      // Game over condition: the new piece collides immediately.
+      this.gameOver = true;
+      alert("Game Over!");
+      // Update high score if necessary.
+      if (this.score > this.highScore) {
+        localStorage.setItem("tetrisHighScore", this.score);
+        this.highScore = this.score;
+      }
+      // Reset game state.
+      this.board = this.createBoard();
+      this.score = 0;
+      this.gameOver = false;
+    }
+  }
+  this.dropCounter = 0;
+};
+
+TetrisGame.prototype.handleKey = function (event) {
+  if (event.keyCode === 37) { // Left arrow
+    this.currentPiece.x--;
+    if (this.collide(this.board, this.currentPiece)) {
+      this.currentPiece.x++;
+    }
+  } else if (event.keyCode === 39) { // Right arrow
+    this.currentPiece.x++;
+    if (this.collide(this.board, this.currentPiece)) {
+      this.currentPiece.x--;
+    }
+  } else if (event.keyCode === 40) { // Down arrow (fast drop)
+    this.drop();
+  } else if (event.keyCode === 38) { // Up arrow (rotate)
+    const oldMatrix = this.currentPiece.matrix;
+    this.currentPiece.matrix = this.rotateMatrix(this.currentPiece.matrix);
+    if (this.collide(this.board, this.currentPiece)) {
+      // Revert rotation if collision occurs.
+      this.currentPiece.matrix = oldMatrix;
+    }
+  }
+};
+
+TetrisGame.prototype.update = function (time = 0) {
+  const deltaTime = time - this.lastTime;
+  this.lastTime = time;
+  this.dropCounter += deltaTime;
+  if (this.dropCounter > this.dropInterval) {
+    this.drop();
+  }
+  this.draw();
+  // Update score displays in the overlay.
+  document.getElementById("scoreDisplay").textContent = "Score: " + this.score;
+  document.getElementById("highScoreDisplay").textContent = "High Score: " + Math.max(this.score, this.highScore);
+  // Continue the game loop.
+  this.animationFrameId = requestAnimationFrame(this.update.bind(this));
+};
+
+TetrisGame.prototype.draw = function () {
+  // Clear the canvas.
+  this.ctx.fillStyle = "#000";
+  this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  // Draw the board (locked pieces).
+  this.drawBoard();
+  // Draw the active piece.
+  this.drawMatrix(this.currentPiece.matrix, { x: this.currentPiece.x, y: this.currentPiece.y });
+};
 
 // =========================
 // INITIALIZATION
