@@ -32,42 +32,60 @@
     "04/18/2025",
     "05/26/2025"
   ],
-  "schedules": {
-    "normal": {
-      "monTueThuFri": [
-        { "name": "Period 1", "start": "07:15", "end": "08:15" },
-        { "name": "Period 2", "start": "08:20", "end": "09:20" },
-        { "name": "Flex Block", "start": "09:25", "end": "09:55" },
-        { "name": "Period 3", "start": "10:00", "end": "11:00" },
-        { "name": "Period 4", "start": "11:05", "end": "12:40" },
-        { "name": "Period 5", "start": "12:45", "end": "13:45" }
-      ],
-      "wednesday": [
-        { "name": "Period 1", "start": "07:15", "end": "08:05" },
-        { "name": "Period 2", "start": "08:10", "end": "09:00" },
-        { "name": "Flex Block", "start": "09:05", "end": "09:20" },
-        { "name": "Period 3", "start": "09:25", "end": "10:15" },
-        { "name": "Period 4", "start": "10:20", "end": "11:55" },
-        { "name": "Period 5", "start": "12:00", "end": "12:45" }
-      ]
-    },
-    "delays": {
-      "oneHour": [
-        { "name": "Period 1", "start": "08:15", "end": "09:10" },
-        { "name": "Period 2", "start": "09:15", "end": "10:10" },
-        { "name": "Period 3", "start": "10:15", "end": "11:10" },
-        { "name": "Period 4", "start": "11:14", "end": "12:46" },
-        { "name": "Period 5", "start": "12:50", "end": "13:45" }
-      ],
-      "twoHour": [
-        { "name": "Period 1", "start": "09:15", "end": "09:55" },
-        { "name": "Period 2", "start": "09:55", "end": "10:40" },
-        { "name": "Period 3", "start": "10:45", "end": "11:26" },
-        { "name": "Period 4", "start": "11:26", "end": "13:01" },
-        { "name": "Period 5", "start": "13:05", "end": "13:45" }
-      ]
-    }
-  },
+  "normalMonTueThuFriSchedule": [
+    { "name": "Period 1", "start": "07:15", "end": "08:15" },
+    { "name": "Period 2", "start": "08:20", "end": "09:20" },
+    { "name": "Flex Block", "start": "09:25", "end": "09:55" },
+    { "name": "Period 3", "start": "10:00", "end": "11:00" },
+    { "name": "Period 4", "start": "11:05", "end": "12:40" },
+    { "name": "Period 5", "start": "12:45", "end": "13:45" }
+  ],
+  "normalWednesdaySchedule": [
+    { "name": "Period 1", "start": "07:15", "end": "08:05" },
+    { "name": "Period 2", "start": "08:10", "end": "09:00" },
+    { "name": "Flex Block", "start": "09:05", "end": "09:20" },
+    { "name": "Period 3", "start": "09:25", "end": "10:15" },
+    { "name": "Period 4", "start": "10:20", "end": "11:55" },
+    { "name": "Period 5", "start": "12:00", "end": "12:45" }
+  ],
+  "oneHourDelaySchedule": [
+    { "name": "Period 1", "start": "08:15", "end": "09:10" },
+    { "name": "Period 2", "start": "09:15", "end": "10:10" },
+    { "name": "Period 3", "start": "10:15", "end": "11:10" },
+    { "name": "Period 4", "start": "11:14", "end": "12:46" },
+    { "name": "Period 5", "start": "12:50", "end": "13:45" }
+  ],
+  "twoHourDelaySchedule": [
+    { "name": "Period 1", "start": "09:15", "end": "09:55" },
+    { "name": "Period 2", "start": "09:55", "end": "10:40" },
+    { "name": "Period 3", "start": "10:45", "end": "11:26" },
+    { "name": "Period 4", "start": "11:26", "end": "13:01" },
+    { "name": "Period 5", "start": "13:05", "end": "13:45" }
+  ],
+  "lunchNormalSchedule": [
+    { "lunch": "1st", "start": "11:05", "end": "11:25" },
+    { "lunch": "2nd", "start": "11:30", "end": "11:50" },
+    { "lunch": "3rd", "start": "11:55", "end": "12:15" },
+    { "lunch": "4th", "start": "12:20", "end": "12:40" }
+  ],
+  "lunchWednesdaySchedule": [
+    { "lunch": "1st", "start": "10:20", "end": "10:40" },
+    { "lunch": "2nd", "start": "10:45", "end": "11:05" },
+    { "lunch": "3rd", "start": "11:10", "end": "11:30" },
+    { "lunch": "4th", "start": "11:35", "end": "11:55" }
+  ],
+  "lunchOneHourDelaySchedule": [
+    { "lunch": "1st", "start": "11:14", "end": "11:34" },
+    { "lunch": "2nd", "start": "11:38", "end": "11:58" },
+    { "lunch": "3rd", "start": "12:02", "end": "12:22" },
+    { "lunch": "4th", "start": "12:26", "end": "12:46" }
+  ],
+  "lunchTwoHourDelaySchedule": [
+    { "lunch": "1st", "start": "11:30", "end": "11:50" },
+    { "lunch": "2nd", "start": "11:54", "end": "12:14" },
+    { "lunch": "3rd", "start": "12:17", "end": "12:37" },
+    { "lunch": "4th", "start": "12:41", "end": "13:01" }
+  ],
   "letterCycle": ["D", "E", "F", "G", "A", "B", "C"],
   "letterDaySchedules": {
     "A": ["A1", "A2", "A3", "A4", "A5"],
@@ -77,31 +95,5 @@
     "E": ["A7", "A1", "A2", "A3", "A4"],
     "F": ["A5", "A6", "A7", "A1", "A2"],
     "G": ["A3", "A4", "A5", "A6", "A7"]
-  },
-  "lunchSchedules": {
-    "normal": [
-      { "lunch": "1st", "start": "11:05", "end": "11:25" },
-      { "lunch": "2nd", "start": "11:30", "end": "11:50" },
-      { "lunch": "3rd", "start": "11:55", "end": "12:15" },
-      { "lunch": "4th", "start": "12:20", "end": "12:40" }
-    ],
-    "wednesday": [
-      { "lunch": "1st", "start": "10:20", "end": "10:40" },
-      { "lunch": "2nd", "start": "10:45", "end": "11:05" },
-      { "lunch": "3rd", "start": "11:10", "end": "11:30" },
-      { "lunch": "4th", "start": "11:35", "end": "11:55" }
-    ],
-    "oneHourDelay": [
-      { "lunch": "1st", "start": "11:14", "end": "11:34" },
-      { "lunch": "2nd", "start": "11:38", "end": "11:58" },
-      { "lunch": "3rd", "start": "12:02", "end": "12:22" },
-      { "lunch": "4th", "start": "12:26", "end": "12:46" }
-    ],
-    "twoHourDelay": [
-      { "lunch": "1st", "start": "11:30", "end": "11:50" },
-      { "lunch": "2nd", "start": "11:54", "end": "12:14" },
-      { "lunch": "3rd", "start": "12:17", "end": "12:37" },
-      { "lunch": "4th", "start": "12:41", "end": "13:01" }
-    ]
   }
 }
