@@ -1497,23 +1497,29 @@ TetrisGame.prototype.drop = function () {
     this.currentPiece.y--;
     this.mergePiece(this.currentPiece);
     this.clearLines();
+    
+    // Spawn a new piece
     this.currentPiece = this.createPiece();
     if (this.collide(this.board, this.currentPiece)) {
-      // Game over condition: the new piece collides immediately.
-      this.gameOver = true;
       alert("Game Over!");
-      // Update high score if necessary.
       if (this.score > this.highScore) {
         localStorage.setItem("tetrisHighScore", this.score);
         this.highScore = this.score;
       }
-      // Reset game state.
-      this.board = this.createBoard();
-      this.score = 0;
-      this.gameOver = false;
+      this.resetGame();
+      return;
     }
   }
   this.dropCounter = 0;
+};
+
+// Reset function to restart the game
+TetrisGame.prototype.resetGame = function () {
+  this.board = this.createBoard();
+  this.score = 0;
+  this.dropCounter = 0;
+  this.lastTime = 0;
+  this.currentPiece = this.createPiece();
 };
 
 TetrisGame.prototype.handleKey = function (event) {
