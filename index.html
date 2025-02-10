@@ -195,24 +195,39 @@
   <!-- Schedule Section -->
   <!-- Inside the Schedule Tab (e.g., in #scheduleTab) -->
 <div id="scheduleTab" style="display: none;">
-  <h1>Today's Schedule</h1>
+  <!-- Navigation Header with arrows and calendar picker -->
+  <div id="scheduleHeader" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+      <button id="prevDay" onclick="previousDay()">&larr;</button>
+      <span id="selectedDateDisplay" style="font-size: 24px;">Today</span>
+      <button id="nextDay" onclick="nextDay()">&rarr;</button>
+      <button id="calendarButton" onclick="toggleCalendar()">📅</button>
+      <!-- Hidden date picker (will be shown when the calendar button is clicked) -->
+      <input type="date" id="datePicker" style="display: none;" onchange="selectDateFromPicker()">
+  </div>
+
+  <!-- You can use an h1 below if you like; here it simply says "Schedule" -->
+  <h1>Schedule</h1>
+
   <!-- Delay buttons -->
   <div id="delayButtons" style="margin-bottom: 15px;">
     <button onclick="setDelay('none')">Normal Schedule</button>
     <button onclick="setDelay('1hr')">1 Hour Delay</button>
     <button onclick="setDelay('2hr')">2 Hour Delay</button>
   </div>
+  
+  <!-- Schedule information display -->
   <div id="scheduleInfo">
     <p id="letterDayDisplay"></p>
     <p id="scheduleTypeDisplay"></p>
+    <!-- For today, these paragraphs will show the current period and countdowns;
+         for a non-today day, currentPeriodDisplay is used to list all periods. -->
     <p id="currentPeriodDisplay"></p>
     <p id="timeRemainingDisplay"></p>
     <p id="lunchDisplay"></p>
     <p id="nextPeriodDisplay"></p>
     <p id="dayRemainingDisplay"></p>
   </div>
-   <p>Made by Joshua Miller</p>
-  </div>
+  <p>Made by Joshua Miller</p>
 </div>
 
 <!-- Classes Tab -->
