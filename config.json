@@ -1,5 +1,5 @@
 {
-  "startDate": "2024-10-31",
+  "startDate": "2025-01-31",
   "holidays": [
     "11/04/2024",
     "11/05/2024",
@@ -86,7 +86,7 @@
     { "lunch": "3rd", "start": "12:17", "end": "12:37" },
     { "lunch": "4th", "start": "12:41", "end": "13:01" }
   ],
-  "letterCycle": ["D", "E", "F", "G", "A", "B", "C"],
+  "letterCycle": ["A", "B", "C", "D", "E", "F", "G"],
   "letterDaySchedules": {
     "A": ["A1", "A2", "A3", "A4", "A5"],
     "B": ["A6", "A7", "A1", "A2", "A3"],
