@@ -580,8 +580,64 @@ function showScheduleTab() {
   document.getElementById('gradeTab').style.display = 'none';
   document.getElementById('classesTab').style.display = 'none';
   document.getElementById('scheduleTab').style.display = 'block';
+  // Reset to today when opening the schedule tab.
+  selectedDate = new Date();
+  updateSelectedDateDisplay();
   updateScheduleTab();
 }
+
+let selectedDate = new Date();
+
+// Helper: Returns true if the given date is today.
+function isToday(date) {
+  const today = new Date();
+  return date.getFullYear() === today.getFullYear() &&
+         date.getMonth() === today.getMonth() &&
+         date.getDate() === today.getDate();
+}
+
+// Update the header’s date display.
+function updateSelectedDateDisplay() {
+  const display = document.getElementById("selectedDateDisplay");
+  if (isToday(selectedDate)) {
+    display.textContent = "Today";
+  } else {
+    display.textContent = selectedDate.toLocaleDateString();
+  }
+}
+
+// Called when the left arrow is clicked.
+function previousDay() {
+  selectedDate.setDate(selectedDate.getDate() - 1);
+  updateSelectedDateDisplay();
+  updateScheduleTab();
+}
+
+// Called when the right arrow is clicked.
+function nextDay() {
+  selectedDate.setDate(selectedDate.getDate() + 1);
+  updateSelectedDateDisplay();
+  updateScheduleTab();
+}
+
+// Toggles display of the calendar picker.
+function toggleCalendar() {
+  const datePicker = document.getElementById("datePicker");
+  datePicker.style.display = (datePicker.style.display === "none") ? "block" : "none";
+}
+
+// Called when a date is picked from the calendar.
+function selectDateFromPicker() {
+  const datePicker = document.getElementById("datePicker");
+  const value = datePicker.value; // in "YYYY-MM-DD" format
+  const parts = value.split("-");
+  // Note: Months are 0-indexed in JavaScript Date.
+  selectedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+  updateSelectedDateDisplay();
+  updateScheduleTab();
+  datePicker.style.display = "none";
+}
+
 
 
 // -------------------------
@@ -932,20 +988,21 @@ function getTransitionInfo(date) {
 
 
 function updateScheduleTab() {
-  const now = new Date();
-  const letterDay = getLetterDay(now);
-  const schedule = getDailySchedule(now);
+  // Use the selectedDate rather than always today.
+  const selected = new Date(selectedDate);
+  const letterDay = getLetterDay(selected);
+  const schedule = getDailySchedule(selected);
 
-  // Get your display elements
+  // Get display elements
   const letterDayDisplay = document.getElementById("letterDayDisplay");
   const scheduleTypeDisplay = document.getElementById("scheduleTypeDisplay");
   const currentPeriodDisplay = document.getElementById("currentPeriodDisplay");
   const timeRemainingDisplay = document.getElementById("timeRemainingDisplay");
   const dayRemainingDisplay = document.getElementById("dayRemainingDisplay");
   const nextPeriodDisplay = document.getElementById("nextPeriodDisplay");
-  const lunchDisplay = document.getElementById("lunchDisplay"); // New element
+  const lunchDisplay = document.getElementById("lunchDisplay");
 
-  // Clear previous content for safety
+  // Clear previous content
   letterDayDisplay.textContent = "";
   scheduleTypeDisplay.textContent = "";
   currentPeriodDisplay.textContent = "";
@@ -955,7 +1012,7 @@ function updateScheduleTab() {
   lunchDisplay.textContent = "";
 
   if (!schedule) {
-    letterDayDisplay.textContent = "No school today.";
+    letterDayDisplay.textContent = "No school on " + selected.toLocaleDateString() + ".";
     return;
   }
 
@@ -968,73 +1025,102 @@ function updateScheduleTab() {
   }
   scheduleTypeDisplay.textContent = "Schedule Type: " + scheduleTypeText;
 
-  const periodInfo = getCurrentPeriodInfo(now);
-
-  if (periodInfo && periodInfo.currentPeriod) {
-    if (periodInfo.currentPeriod.name.toLowerCase() === "flex block") {
-      currentPeriodDisplay.textContent = "Flex Block";
-    } else {
-      let currentLetter = "";
-      if (currentDelay === "none") {
-        // For normal schedule, adjust for Flex Block.
-        // mapping: schedule index 0 → letter index 0, 1 → 1, 3 → 2, 4 → 3, 5 → 4.
-        const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
-        currentLetter = mapping.hasOwnProperty(periodInfo.currentPeriod.index)
-          ? letterDaySchedules[letterDay][mapping[periodInfo.currentPeriod.index]]
-          : letterDaySchedules[letterDay][periodInfo.currentPeriod.index];
+  // If the selected day is today, show live info with countdown timers…
+  if (isToday(selected)) {
+    const periodInfo = getCurrentPeriodInfo(selected); // Note: getCurrentPeriodInfo uses new Date() for "now"
+    if (periodInfo && periodInfo.currentPeriod) {
+      if (periodInfo.currentPeriod.name.toLowerCase() === "flex block") {
+        currentPeriodDisplay.textContent = "Flex Block";
       } else {
-        currentLetter = letterDaySchedules[letterDay][periodInfo.currentPeriod.index];
+        let currentLetter = "";
+        if (currentDelay === "none") {
+          // For normal schedule, adjust for Flex Block
+          const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
+          currentLetter = mapping.hasOwnProperty(periodInfo.currentPeriod.index)
+            ? letterDaySchedules[letterDay][mapping[periodInfo.currentPeriod.index]]
+            : letterDaySchedules[letterDay][periodInfo.currentPeriod.index];
+        } else {
+          currentLetter = letterDaySchedules[letterDay][periodInfo.currentPeriod.index];
+        }
+        const currentClassName = getClassNameByPeriod(currentLetter);
+        currentPeriodDisplay.textContent = "Current Period: " +
+          periodInfo.currentPeriod.name +
+          " – Class: " + currentLetter + " (" + currentClassName + ")";
       }
-      const currentClassName = getClassNameByPeriod(currentLetter);
-      currentPeriodDisplay.textContent = "Current Period: " +
-        periodInfo.currentPeriod.name +
-        " – Class: " + currentLetter + " (" + currentClassName + ")";
-    }
 
-    timeRemainingDisplay.textContent = "Time remaining in period: " +
-      formatTimeLeft(periodInfo.timeLeftInPeriodMs);
-    dayRemainingDisplay.textContent = "Time remaining in school day: " +
-      formatTimeLeft(periodInfo.timeLeftInDayMs);
+      timeRemainingDisplay.textContent = "Time remaining in period: " +
+        formatTimeLeft(periodInfo.timeLeftInPeriodMs);
+      dayRemainingDisplay.textContent = "Time remaining in school day: " +
+        formatTimeLeft(periodInfo.timeLeftInDayMs);
 
-    // Next period logic
-    let nextIndex = periodInfo.currentPeriod.index + 1;
-    if (currentDelay === "none" && schedule[nextIndex] && schedule[nextIndex].name === "Flex Block" && nextIndex < schedule.length - 1) {
-      nextIndex++;
-    }
-    if (schedule[nextIndex]) {
-      const nextPeriod = schedule[nextIndex];
-      let nextLetter = "";
-      if (currentDelay === "none") {
-        const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
-        nextLetter = mapping.hasOwnProperty(nextIndex)
-          ? letterDaySchedules[letterDay][mapping[nextIndex]]
-          : letterDaySchedules[letterDay][nextIndex];
+      // Next period info
+      let nextIndex = periodInfo.currentPeriod.index + 1;
+      if (currentDelay === "none" && schedule[nextIndex] && schedule[nextIndex].name === "Flex Block" && nextIndex < schedule.length - 1) {
+        nextIndex++;
+      }
+      if (schedule[nextIndex]) {
+        const nextPeriod = schedule[nextIndex];
+        let nextLetter = "";
+        if (currentDelay === "none") {
+          const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
+          nextLetter = mapping.hasOwnProperty(nextIndex)
+            ? letterDaySchedules[letterDay][mapping[nextIndex]]
+            : letterDaySchedules[letterDay][nextIndex];
+        } else {
+          nextLetter = letterDaySchedules[letterDay][nextIndex];
+        }
+        const nextClassName = getClassNameByPeriod(nextLetter);
+        nextPeriodDisplay.textContent = "Next Period: " +
+          nextPeriod.name +
+          " – Class: " + nextLetter + " (" + nextClassName + ")";
       } else {
-        nextLetter = letterDaySchedules[letterDay][nextIndex];
+        nextPeriodDisplay.textContent = "No Next Period Right Now!";
       }
-      const nextClassName = getClassNameByPeriod(nextLetter);
-      nextPeriodDisplay.textContent = "Next Period: " +
-        nextPeriod.name +
-        " – Class: " + nextLetter + " (" + nextClassName + ")";
     } else {
-      nextPeriodDisplay.textContent = "No Next Period Right Now!";
+      // Transition period, if applicable
+      const transitionInfo = getTransitionInfo(selected);
+      if (transitionInfo) {
+        currentPeriodDisplay.textContent = "Transitioning from " +
+          transitionInfo.prevLetter + " to " + transitionInfo.nextLetter;
+        timeRemainingDisplay.textContent = "Time until next period: " +
+          formatTimeLeft(transitionInfo.timeUntilNextMs);
+      } else {
+        currentPeriodDisplay.textContent = "No class is currently in session.";
+      }
     }
   } else {
-    // Handle transition period (if applicable)
-    const transitionInfo = getTransitionInfo(now);
-    if (transitionInfo) {
-      currentPeriodDisplay.textContent = "Transitioning from " +
-        transitionInfo.prevLetter + " to " + transitionInfo.nextLetter;
-      timeRemainingDisplay.textContent = "Time until next period: " +
-        formatTimeLeft(transitionInfo.timeUntilNextMs);
-    } else {
-      currentPeriodDisplay.textContent = "No class is currently in session.";
-    }
+    // For a day other than today, display a static list of periods (no countdowns)
+    let scheduleHTML = "";
+    schedule.forEach((period, i) => {
+      // If normal schedule and this is the Flex Block, simply show its name and times.
+      if (currentDelay === "none" && period.name.toLowerCase() === "flex block") {
+        scheduleHTML += `<strong>${period.name}</strong> (${period.start} - ${period.end})<br>`;
+      } else {
+        let periodLetter = "";
+        if (currentDelay === "none") {
+          const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
+          if (mapping.hasOwnProperty(i)) {
+            periodLetter = letterDaySchedules[letterDay][mapping[i]];
+          } else {
+            periodLetter = letterDaySchedules[letterDay][i];
+          }
+        } else {
+          periodLetter = letterDaySchedules[letterDay][i];
+        }
+        const className = getClassNameByPeriod(periodLetter);
+        scheduleHTML += `<strong>${period.name}</strong> (${period.start} - ${period.end}) – Class: ${periodLetter} (${className})<br>`;
+      }
+    });
+    currentPeriodDisplay.innerHTML = scheduleHTML;
+    timeRemainingDisplay.textContent = "";
+    dayRemainingDisplay.textContent = "";
+    nextPeriodDisplay.textContent = "";
   }
 
-  // --------------
+  // -----------------
   // LUNCH INFO
-  // --------------
+  // -----------------
+  // Determine which lunch period applies based on letter day
   let lunchA = "";
   if (letterDay == 'A') {
     lunchA = "A4";
@@ -1052,7 +1138,6 @@ function updateScheduleTab() {
     lunchA = "A6";
   }
   let indexT = -1;
-
   for (let i = 0; i < classesData.length; i++) {
     if (classesData[i].periodOption === lunchA) {
       indexT = i;
@@ -1061,24 +1146,28 @@ function updateScheduleTab() {
   }
   let activeClass = classesData[indexT];
 
+  const lunchScheduleArr = getLunchSchedule(selected);
   if (activeClass && activeClass.lunch) {
     const lunchSelection = parseInt(activeClass.lunch); // expected to be 1, 2, 3, or 4
-    const lunchSchedule = getLunchSchedule(now);
-    if (lunchSelection >= 1 && lunchSelection <= lunchSchedule.length) {
-      const lunchInfo = lunchSchedule[lunchSelection - 1];
-      // Create a Date object for the lunch start time (today)
-      const lunchStart = timeStringToDate(now, lunchInfo.start);
-      const timeUntilLunchMs = lunchStart - now;
-      const formattedTimeUntilLunch = formatTimeLeft(timeUntilLunchMs);
-
-      // Set the lunch display (using innerHTML so we can include a <br> for line break)
-      if (formattedTimeUntilLunch != "0 minute(s) 00 second(s)") {
-        lunchDisplay.innerHTML = "You have " + lunchInfo.lunch +
-          " lunch at " + lunchInfo.start + " - " + lunchInfo.end +
-          ". " + formattedTimeUntilLunch + " until lunch.";
+    if (lunchSelection >= 1 && lunchSelection <= lunchScheduleArr.length) {
+      const lunchInfo = lunchScheduleArr[lunchSelection - 1];
+      if (isToday(selected)) {
+        // For today, include countdown info
+        const lunchStart = timeStringToDate(selected, lunchInfo.start);
+        const timeUntilLunchMs = lunchStart - new Date();
+        const formattedTimeUntilLunch = formatTimeLeft(timeUntilLunchMs);
+        if (formattedTimeUntilLunch !== "0 minute(s) 00 second(s)") {
+          lunchDisplay.innerHTML = "You have " + lunchInfo.lunch +
+            " lunch at " + lunchInfo.start + " - " + lunchInfo.end +
+            ". " + formattedTimeUntilLunch + " until lunch.";
+        }
+      } else {
+        // For a non-today day, just display the lunch time range.
+        lunchDisplay.innerHTML = "Lunch: " + lunchInfo.lunch + " lunch at " +
+          lunchInfo.start + " - " + lunchInfo.end;
       }
     }
-  } else {
+  } else { 
     lunchDisplay.textContent = "";
   }
 }
