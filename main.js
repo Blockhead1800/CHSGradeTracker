@@ -1081,7 +1081,7 @@ function updateScheduleTab() {
       const transitionInfo = getTransitionInfo(selected);
       if (transitionInfo) {
         currentPeriodDisplay.textContent = "Transitioning from " +
-          transitionInfo.prevLetter + " to " + transitionInfo.nextLetter;
+          transitionInfo.prevLetter + "(" + getClassNameByPeriod(transitionInfo.prevLetter) +") to " + transitionInfo.nextLetter + "(" + getClassNameByPeriod(transitionInfo.nextLetter) + ")";
         timeRemainingDisplay.textContent = "Time until next period: " +
           formatTimeLeft(transitionInfo.timeUntilNextMs);
       } else {
@@ -1229,14 +1229,20 @@ function showTetrisOverlay() {
   // Start the Tetris game.
   const canvas = document.getElementById("tetrisCanvas");
   const game = new TetrisGame(canvas);
-  // Initialize lastTime to the current timestamp to avoid a huge delta in the first frame.
+  // Expose game instance globally for beforeunload event.
+  window.currentTetrisGame = game;
+  // Initialize lastTime to avoid a huge delta in the first frame.
   game.lastTime = performance.now();
   game.update(game.lastTime);
 
-  // Close button: cancel the game loop and hide the overlay.
+  // Close button: cancel the game loop, save the score, and hide the overlay.
   document.getElementById("closeTetrisBtn").addEventListener("click", function () {
     cancelAnimationFrame(game.animationFrameId);
     document.removeEventListener("keydown", game.keyHandler);
+    // Save high score if the current score is greater.
+    if (game.score > game.highScore) {
+      localStorage.setItem("tetrisHighScore", game.score);
+    }
     overlay.style.display = "none";
   });
 }
@@ -1312,7 +1318,7 @@ function TetrisGame(canvas) {
   this.highScore = parseInt(localStorage.getItem("tetrisHighScore") || "0", 10);
   this.gameOver = false;
   this.dropCounter = 0;
-  this.dropInterval = 500; // drop every 1 second (adjust if needed)
+  this.dropInterval = 500; // drop every 500ms (adjust if needed)
   this.lastTime = 0;
   // Spawn the first piece.
   this.currentPiece = this.createPiece();
@@ -1423,6 +1429,30 @@ TetrisGame.prototype.clearLines = function () {
   }
 };
 
+// Check if any cell in the top row is occupied.
+TetrisGame.prototype.checkGameOver = function () {
+  return this.board[0].some(cell => cell !== 0);
+};
+
+TetrisGame.prototype.endGame = function () {
+  cancelAnimationFrame(this.animationFrameId);
+  document.removeEventListener("keydown", this.keyHandler);
+  // Delay the confirm to ensure the animation loop is fully stopped.
+  setTimeout(() => {
+    if (confirm("Game Over! Click OK to restart.")) {
+      if (this.score > this.highScore) {
+        localStorage.setItem("tetrisHighScore", this.score);
+        this.highScore = this.score;
+      }
+      this.resetGame();
+      this.lastTime = performance.now();
+      // Rebind the key handler since we removed it on game over.
+      document.addEventListener("keydown", this.keyHandler);
+      this.update();
+    }
+  }, 0);
+};
+
 TetrisGame.prototype.drop = function () {
   this.currentPiece.y++;
   if (this.collide(this.board, this.currentPiece)) {
@@ -1430,15 +1460,16 @@ TetrisGame.prototype.drop = function () {
     this.mergePiece(this.currentPiece);
     this.clearLines();
     
-    // Spawn a new piece
+    // Check if any blocks have reached the top.
+    if (this.checkGameOver()) {
+      this.endGame();
+      return;
+    }
+    
+    // Spawn a new piece.
     this.currentPiece = this.createPiece();
     if (this.collide(this.board, this.currentPiece)) {
-      alert("Game Over!");
-      if (this.score > this.highScore) {
-        localStorage.setItem("tetrisHighScore", this.score);
-        this.highScore = this.score;
-      }
-      this.resetGame();
+      this.endGame();
       return;
     }
   }
@@ -1501,6 +1532,16 @@ TetrisGame.prototype.draw = function () {
   // Draw the falling piece.
   this.drawMatrix(this.currentPiece.matrix, { x: this.currentPiece.x, y: this.currentPiece.y });
 };
+
+// Optional: Save the game state when the window is closed.
+window.addEventListener("beforeunload", function () {
+  if (window.currentTetrisGame) {
+    if (window.currentTetrisGame.score > window.currentTetrisGame.highScore) {
+      localStorage.setItem("tetrisHighScore", window.currentTetrisGame.score);
+    }
+  }
+});
+
 
 // =========================
 // INITIALIZATION
