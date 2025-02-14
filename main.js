@@ -1029,12 +1029,13 @@ function updateScheduleTab() {
   if (isToday(selected)) {
     const periodInfo = getCurrentPeriodInfo(selected); // Note: getCurrentPeriodInfo uses new Date() for "now"
     if (periodInfo && periodInfo.currentPeriod) {
+      // Display current period (or Flex Block if that’s the current period)
       if (periodInfo.currentPeriod.name.toLowerCase() === "flex block") {
         currentPeriodDisplay.textContent = "Flex Block";
       } else {
         let currentLetter = "";
         if (currentDelay === "none") {
-          // For normal schedule, adjust for Flex Block
+          // For normal schedule, adjust for Flex Block (if needed)
           const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
           currentLetter = mapping.hasOwnProperty(periodInfo.currentPeriod.index)
             ? letterDaySchedules[letterDay][mapping[periodInfo.currentPeriod.index]]
@@ -1053,40 +1054,76 @@ function updateScheduleTab() {
       dayRemainingDisplay.textContent = "Time remaining in school day: " +
         formatTimeLeft(periodInfo.timeLeftInDayMs);
 
-      // Next period info
+      // NEXT PERIOD INFO
+      // Instead of skipping Flex Block, check if the very next period is Flex Block.
       let nextIndex = periodInfo.currentPeriod.index + 1;
-      if (currentDelay === "none" && schedule[nextIndex] && schedule[nextIndex].name === "Flex Block" && nextIndex < schedule.length - 1) {
-        nextIndex++;
-      }
       if (schedule[nextIndex]) {
         const nextPeriod = schedule[nextIndex];
-        let nextLetter = "";
-        if (currentDelay === "none") {
-          const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
-          nextLetter = mapping.hasOwnProperty(nextIndex)
-            ? letterDaySchedules[letterDay][mapping[nextIndex]]
-            : letterDaySchedules[letterDay][nextIndex];
+        if (nextPeriod.name.toLowerCase() === "flex block") {
+          nextPeriodDisplay.textContent = "Next Period: Flex Block";
         } else {
-          nextLetter = letterDaySchedules[letterDay][nextIndex];
+          let nextLetter = "";
+          if (currentDelay === "none") {
+            const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
+            nextLetter = mapping.hasOwnProperty(nextIndex)
+              ? letterDaySchedules[letterDay][mapping[nextIndex]]
+              : letterDaySchedules[letterDay][nextIndex];
+          } else {
+            nextLetter = letterDaySchedules[letterDay][nextIndex];
+          }
+          const nextClassName = getClassNameByPeriod(nextLetter);
+          nextPeriodDisplay.textContent = "Next Period: " +
+            nextPeriod.name +
+            " – Class: " + nextLetter + " (" + nextClassName + ")";
         }
-        const nextClassName = getClassNameByPeriod(nextLetter);
-        nextPeriodDisplay.textContent = "Next Period: " +
-          nextPeriod.name +
-          " – Class: " + nextLetter + " (" + nextClassName + ")";
       } else {
         nextPeriodDisplay.textContent = "No Next Period Right Now!";
       }
     } else {
-      // Transition period, if applicable
-      const transitionInfo = getTransitionInfo(selected);
-      if (transitionInfo) {
-        currentPeriodDisplay.textContent = "Transitioning from " +
-          transitionInfo.prevLetter + "(" + getClassNameByPeriod(transitionInfo.prevLetter) +") to " + transitionInfo.nextLetter + "(" + getClassNameByPeriod(transitionInfo.nextLetter) + ")";
-        timeRemainingDisplay.textContent = "Time until next period: " +
-          formatTimeLeft(transitionInfo.timeUntilNextMs);
+      // Transition period branch
+const transitionInfo = getTransitionInfo(selected);
+if (transitionInfo) {
+  const now = new Date();
+  let upcomingPeriod = null;
+  for (let i = 0; i < schedule.length; i++) {
+    // Use >= so that a period starting "now" is caught.
+    const periodStart = timeStringToDate(selected, schedule[i].start);
+    if (periodStart >= now) {
+      upcomingPeriod = schedule[i];
+      break;
+    }
+  }
+  if (upcomingPeriod && upcomingPeriod.name.toLowerCase() === "flex block") {
+    currentPeriodDisplay.textContent = "Transitioning to Flex Block";
+    nextPeriodDisplay.textContent = "Next Period: Flex Block";
+  } else {
+    currentPeriodDisplay.textContent = "Transitioning from " +
+      transitionInfo.prevLetter + "(" + getClassNameByPeriod(transitionInfo.prevLetter) + ") to " +
+      transitionInfo.nextLetter + "(" + getClassNameByPeriod(transitionInfo.nextLetter) + ")";
+    if (upcomingPeriod) {
+      let nextLetter = "";
+      const nextIndex = schedule.indexOf(upcomingPeriod);
+      if (currentDelay === "none") {
+        const mapping = { 0: 0, 1: 1, 3: 2, 4: 3, 5: 4 };
+        nextLetter = mapping.hasOwnProperty(nextIndex)
+          ? letterDaySchedules[letterDay][mapping[nextIndex]]
+          : letterDaySchedules[letterDay][nextIndex];
       } else {
-        currentPeriodDisplay.textContent = "No class is currently in session.";
+        nextLetter = letterDaySchedules[letterDay][nextIndex];
       }
+      const nextClassName = getClassNameByPeriod(nextLetter);
+      nextPeriodDisplay.textContent = "Next Period: " +
+        upcomingPeriod.name +
+        " – Class: " + nextLetter + " (" + nextClassName + ")";
+    } else {
+      nextPeriodDisplay.textContent = "No Next Period Right Now!";
+    }
+  }
+  timeRemainingDisplay.textContent = "Time until next period: " +
+    formatTimeLeft(transitionInfo.timeUntilNextMs);
+} else {
+  currentPeriodDisplay.textContent = "No class is currently in session.";
+}
     }
   } else {
     // For a day other than today, display a static list of periods (no countdowns)
@@ -1171,8 +1208,6 @@ function updateScheduleTab() {
     lunchDisplay.textContent = "";
   }
 }
-
-
 
 
 // (Optional) Refresh the schedule info every minute.
