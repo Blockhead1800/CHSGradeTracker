@@ -1016,9 +1016,15 @@ function updateScheduleTab() {
     return;
   }
 
+  const firstPeriodStart = timeStringToDate(selected, schedule[0].start);
   const firstLetter = letterDaySchedules[letterDay][0];
   const firstClassName = getClassNameByPeriod(firstLetter);
-  letterDayDisplay.textContent = "Letter Day: " + letterDay + ", First Period Class: " + firstLetter + " (" + firstClassName + ")";
+  const now = new Date();
+  if(now > firstPeriodStart) {
+    letterDayDisplay.textContent = "Letter Day: " + letterDay;
+  } else {
+    letterDayDisplay.textContent = "Letter Day: " + letterDay + ", First Period Class: " + firstLetter + " (" + firstClassName + ")";
+  }
   let scheduleTypeText = "Normal Schedule";
   if (currentDelay === "1hr") {
     scheduleTypeText = "One Hour Delay";
