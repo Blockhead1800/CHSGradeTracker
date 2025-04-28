@@ -740,7 +740,7 @@ const twoHourDelaySchedule = [
 
 
 // Reference school day: 10/31/2024 is a D day.
-const referenceDate = new Date("2024-10-31");
+const referenceDate = new Date(2024, 9, 31, 0, 0, 0, 0);
 
 // -------------------------
 // LUNCH SCHEDULES
